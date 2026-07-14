@@ -29,6 +29,9 @@ Stateパターンを採用
 #include "DxLib.h"
 #include "GameData.h"
 #include "Player.h"
+#include "PlayerController.h"
+#include "Block.h"
+#include "Stage.h"
 
 // クラスのインスタンス化
 ColorManager Col;
@@ -46,19 +49,27 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     Col.Init();
     Font.Init();
 
-    Player player; // プレイヤー生成
+    // 実体生成
+    Player player;
+    PlayerController controller(&player);
+    Stage stage;
+    stage.Init();
+    
 
     while (
         ClearDrawScreen() == 0 &&		// 画面に描かれたものを消去する
         ProcessMessage() == 0 &&        // ウィンドウズのメッセージ処理
         CheckHitKey(KEY_INPUT_ESCAPE) == 0)
     {
-
-        player.Update(); // 更新
-        player.Draw();   // 描画
+        controller.Update();
+        stage.Update(player);
+        
+        stage.Draw();
+        player.Draw();
 
         ScreenFlip();
     }
 
-    // 終了処理...
+    DxLib_End();
+    return 0;
 }
