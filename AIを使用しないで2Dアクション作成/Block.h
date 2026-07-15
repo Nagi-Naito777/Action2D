@@ -31,6 +31,6 @@ public:
     void Draw()const;
 
     Rect GetRect()const {
-        return { x,y,x * BLOCK_SIZE,y * BLOCK_SIZE };
+        return { x, y, BLOCK_SIZE, BLOCK_SIZE };
     }
 };

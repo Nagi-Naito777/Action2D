@@ -25,7 +25,7 @@ public:
     float GetX() const { return x; }
     float GetY() const { return y; }
     Rect GetRect() const {
-        return { x, y, x * PLAYER_SIZE, y * PLAYER_SIZE };
+        return { x, y, PLAYER_SIZE, PLAYER_SIZE };
     }
 
     // セッター

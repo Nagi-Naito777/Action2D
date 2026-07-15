@@ -6,13 +6,15 @@
 #define WIN_MAX_Y 800
 
 // プレイヤーサイズ
-#define PLAYER_SIZE 20
+#define PLAYER_SIZE 25
 
 // ブロックサイズ
-#define BLOCK_SIZE 20
+#define BLOCK_SIZE 25
 
 // 重力定数
 #define GRAVITY 0.5f
+// 重力最大値
+#define GRAVITY_MAX 15.0f
 
 #include "DxLib.h"
 

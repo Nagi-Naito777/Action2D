@@ -12,8 +12,8 @@ void Stage::Init() {
                 blocks.push_back(Block(
                     x * BLOCK_SIZE,
                     y * BLOCK_SIZE,
-                    BLOCK_SIZE,
-                    BLOCK_SIZE
+                    x + BLOCK_SIZE,
+                    y + BLOCK_SIZE
                 ));
             }
         }
