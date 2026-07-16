@@ -19,7 +19,7 @@ public:
     ~Player();          // デストラクタ
 
     void Update(const std::vector<Block>& blocks);      // ロジック更新
-    void Draw() const;  // 描画
+    void Draw(float centerX, float centerY, float angle) const;  // 描画
 
     // ゲッター
     float GetX() const { return x; }

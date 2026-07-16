@@ -5,18 +5,38 @@
 #define WIN_MAX_X 1000
 #define WIN_MAX_Y 800
 
+// ステージ範囲描画原点
+#define STAGE_POSX 250
+#define STAGE_POSY 150
+
+// ステージ範囲のブロック最大個数
+#define STAGE_BLOCK_MAX 20
+
+// ステージ最大数
+#define STAGE_MAX 5
+
+// プレイヤースタート原点
+#define PLAYER_STARTX 475
+#define PLAYER_STARTY 550
+
 // プレイヤーサイズ
 #define PLAYER_SIZE 25
-
 // ブロックサイズ
 #define BLOCK_SIZE 25
+// ブロックとプレイヤーの隙間考慮数値
+#define PLA_BLO_GAP (0.1f)
 
 // 重力定数
-#define GRAVITY 0.5f
+#define GRAVITY (0.5f)
 // 重力最大値
-#define GRAVITY_MAX 15.0f
+#define GRAVITY_MAX (15.0f)
 
 #include "DxLib.h"
+#include <cmath>
+
+// 回転用の四角形を描画するための座標を取得する関数
+void GetRotatedPosition(float centerX, float centerY, float x, float y,
+    float* outX, float* outY, float angleDeg);
 
 // フォント管理クラス
 class FontManager

@@ -133,10 +133,12 @@
   <ItemGroup>
     <ClCompile Include="Block.cpp" />
     <ClCompile Include="Collision.cpp" />
+    <ClCompile Include="GameData.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerController.cpp" />
     <ClCompile Include="Stage.cpp" />
+    <ClCompile Include="StageLogic.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Block.h" />
@@ -145,6 +147,7 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerController.h" />
     <ClInclude Include="Stage.h" />
+    <ClInclude Include="StageLogic.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

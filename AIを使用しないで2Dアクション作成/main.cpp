@@ -64,8 +64,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         controller.Update();
         stage.Update(player);
         
-        stage.Draw();
-        player.Draw();
+        stage.Draw(player);
 
         ScreenFlip();
     }
