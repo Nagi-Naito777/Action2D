@@ -5,26 +5,18 @@
 #define WIN_MAX_X 1000
 #define WIN_MAX_Y 800
 
-// ステージ範囲描画原点
-#define STAGE_POSX 250
-#define STAGE_POSY 150
-
 // ステージ範囲のブロック最大個数
-#define STAGE_BLOCK_MAX 20
+#define STAGE_BLOCK_MAX 21
 
 // ステージ最大数
 #define STAGE_MAX 5
-
-// プレイヤースタート原点
-#define PLAYER_STARTX 475
-#define PLAYER_STARTY 550
 
 // プレイヤーサイズ
 #define PLAYER_SIZE 25
 // ブロックサイズ
 #define BLOCK_SIZE 25
 // ブロックとプレイヤーの隙間考慮数値
-#define PLA_BLO_GAP (0.1f)
+#define PLA_BLO_GAP (0.01f)
 
 // 重力定数
 #define GRAVITY (0.5f)
@@ -37,6 +29,23 @@
 // 回転用の四角形を描画するための座標を取得する関数
 void GetRotatedPosition(float centerX, float centerY, float x, float y,
     float* outX, float* outY, float angleDeg);
+
+// 重力の方向
+enum class GravityDir {
+    Down,   // 通常は下向き
+    Left,   // 左向き
+    Up,     // 上
+    Right   // 右
+};
+
+// 重力方向のマネージャー
+class GravityManager {
+public:
+    static GravityDir currentDir; // 現在の向き
+
+    // 向きを回転させる関数
+    static void Rotate();
+};
 
 // フォント管理クラス
 class FontManager

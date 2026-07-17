@@ -53,7 +53,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     Player player;
     PlayerController controller(&player);
     Stage stage;
-    stage.Init();
+    stage.Init(player);
     
 
     while (

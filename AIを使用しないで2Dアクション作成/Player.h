@@ -27,10 +27,18 @@ public:
     Rect GetRect() const {
         return { x, y, PLAYER_SIZE, PLAYER_SIZE };
     }
+    // 地面に着地しているか判定取得
+    bool IsGraounded()const { return isGrounded; }
 
     // セッター
-    void SetPosition(float newX, float newY);
+    void SetPosition(float setX, float setY) {
+        x = setX;
+        y = setY;
+    }
     void SetVelocityX(float setX) {
         velocityX = setX;
+    }
+    void SetVelocityY(float setY) {
+        velocityY = setY;
     }
 };

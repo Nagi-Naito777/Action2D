@@ -1,50 +1,86 @@
 #include "Stage.h"
-#include "Collision.h"
+#include "Collision.h"[
+#include "Block.h"
+#include "Player.h"
+#include "StageLogic.h"]
 
 Stage::Stage() {
+    // ステージ全体サイズ変数
+    float stageTotalWidth = STAGE_BLOCK_MAX * BLOCK_SIZE;
+    float stageTotalHeight = STAGE_BLOCK_MAX * BLOCK_SIZE;
+
+    // 画面中央に配置するための座標格納
+    startX = (int)(WIN_MAX_X - stageTotalWidth) / 2.0f;
+    startY = (int)(WIN_MAX_Y - stageTotalHeight) / 2.0f;
+
     // 周りのブロックを設置するループ文(初期化)
     for (int y = 0; y < STAGE_BLOCK_MAX; y++) {
         for (int x = 0; x < STAGE_BLOCK_MAX; x++) {
             if (y == 0 || y == STAGE_BLOCK_MAX - 1 || x == 0 || x == STAGE_BLOCK_MAX - 1) {
-                blocks.push_back(Block(
-                    STAGE_POSX + (x * BLOCK_SIZE),
-                    STAGE_POSY + (y * BLOCK_SIZE),
-                    x + BLOCK_SIZE,
-                    y + BLOCK_SIZE,
-                    BlockType::Normal
-                ));
+                SetStageBlock(x, y, BlockType::Normal);
             }
         }
     }
 
-    // 中心のX座標 = 左上のX + (ブロックの数 * ブロックのサイズ) / 2
-    centerX = STAGE_POSX + (STAGE_BLOCK_MAX * BLOCK_SIZE) / 2.0f;
-
-    // 中心のY座標 = 左上のY + (ブロックの数 * ブロックのサイズ) / 2
-    centerY = STAGE_POSY + (STAGE_BLOCK_MAX * BLOCK_SIZE) / 2.0f;
+    // 中心のX座標
+    centerX = WIN_MAX_X / 2.0f;
+    // 中心のY座標
+    centerY = WIN_MAX_Y / 2.0f;
 
     stageNo = 1;
 }
 Stage::~Stage() {}
 
-void Stage::Init() {
+void Stage::Init(Player &p) {
+    // 速度リセット
+    p.SetVelocityX(0.0f);
+    p.SetVelocityY(0.0f);
+
+    // ステージごとの初期グリッド（マス目）座標用の変数
+    int playerGridX = 0;
+    int playerGridY = 0;
+
+    // ステージ番号（stageNo）に応じて初期グリッド位置を設定
+    switch (stageNo) {
+    case 1:
+        playerGridX = 10; // 左から10番目のマス
+        playerGridY = 16; // 上から16番目のマス
+        break;
+    case 2:
+        playerGridX = 10;
+        playerGridY = 10;
+        break;
+    case 3:
+        playerGridX = 2;
+        playerGridY = 17;
+        break;
+    default:
+        playerGridX = 10;
+        playerGridY = 10;
+        break;
+    }
+
+    // グリッド座標を、中央寄せを考慮したピクセル座標に変換してセット
+    float playerStartX = startX + (playerGridX * BLOCK_SIZE);
+    float playerStartY = startY + (playerGridY * BLOCK_SIZE);
+    p.SetPosition(playerStartX, playerStartY);
+
     // ステージの番号ごとに描画する内容を変更する
     for (int y = 0; y < STAGE_BLOCK_MAX; y++) {
         for (int x = 0; x < STAGE_BLOCK_MAX; x++) {
             switch (stageNo) {
             case 1:
+                // ゴール配置
                 if (x == 10 && y == 1) {
-                    blocks.push_back(Block(
-                        STAGE_POSX + (x * BLOCK_SIZE),
-                        STAGE_POSY + (y * BLOCK_SIZE),
-                        x + BLOCK_SIZE,
-                        y + BLOCK_SIZE,
-                        BlockType::Goal
-                    ));
+                    SetStageBlock(x, y, BlockType::Goal);
                 }
+                // 真ん中当たりに一本の線を引くようにブロックを配置
+                if ((y == 10 && (x < 18 && x > 2))) {
+                    SetStageBlock(x, y, BlockType::Normal);
+                }
+                break;
             case 2:
             case 3:
-            case 4:
             default:
                 break;
             }
@@ -109,9 +145,41 @@ void Stage::Draw(const Player& player) const {
 }
 
 void Stage::TriggerRotation(RotationType type) {
-    // もし通常状態（操作可能）なら、回転を開始して状態を「回転中」に切り替える
     if (currentState == StageState::Normal) {
+        // 1. ステージ回転の開始
         logic.StartRotation(type);
         currentState = StageState::Rotating;
+
+        // 2. 【追加】回転に応じて重力も切り替える
+        // 回転の度合いに合わせて、重力マネージャーを回します
+        switch (type) {
+        case RotationType::Right90:
+            // 時計周りだから右回転したら重力は左なので、3回転して左側に重力を持っていく
+            GravityManager::Rotate();
+            GravityManager::Rotate();
+            GravityManager::Rotate();
+            break;
+        case RotationType::Left90:
+            // 現在地の右側に重力を持っていく
+            GravityManager::Rotate();
+            
+            break;
+        case RotationType::Turn180:
+            // 2回回して現在地の上側に重力を持っていく
+            GravityManager::Rotate();
+            GravityManager::Rotate();
+            break;
+        }
     }
+}
+
+// ブロックセット関数
+void Stage::SetStageBlock(int x, int y, BlockType bt) {
+    blocks.push_back(Block(
+        startX + (x * BLOCK_SIZE),
+        startY + (y * BLOCK_SIZE),
+        BLOCK_SIZE,
+        BLOCK_SIZE,
+        bt
+    ));
 }

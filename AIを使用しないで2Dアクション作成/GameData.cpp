@@ -20,3 +20,26 @@ void GetRotatedPosition(float centerX, float centerY, float x, float y,
     *outX = rx + centerX;
     *outY = ry + centerY;
 }
+
+GravityDir GravityManager::currentDir = GravityDir::Down;
+
+// âÒì]ÉçÉWÉbÉN
+void GravityManager::Rotate() {
+    switch (GravityManager::currentDir)
+    {
+    case GravityDir::Down:
+        GravityManager::currentDir = GravityDir::Left;
+        break;
+    case GravityDir::Left:
+        GravityManager::currentDir = GravityDir::Up;
+        break;
+    case GravityDir::Up:
+        GravityManager::currentDir = GravityDir::Right;
+        break;
+    case GravityDir::Right:
+        GravityManager::currentDir = GravityDir::Down;
+        break;
+    default:
+        break;
+    }
+}

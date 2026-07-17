@@ -55,6 +55,20 @@ void StageLogic::Update() {
 	switch (currentPhase)
 	{
 	case RotationPhase::Shake:
+		// timerの経過フレーム数に応じて、手動で角度をズラす
+		if (timer < 5) {
+			currentAngle = startAngle - (3.0f * dir); // 逆方向に3度ズレる
+		}
+		else if (timer < 10) {
+			currentAngle = startAngle + (1.5f * dir); // 反動で少し進む
+		}
+		else if (timer < 15) {
+			currentAngle = startAngle - (0.5f * dir); // もう一度小さく戻る
+		}
+		else {
+			currentAngle = startAngle; // ピタッと止まる
+		}
+
 		if (timer > 20) {
 			currentPhase = RotationPhase::Pause;
 			timer = 0; // 毎回必ずリセット

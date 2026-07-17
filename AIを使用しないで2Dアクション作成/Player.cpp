@@ -2,8 +2,8 @@
 #include "GameData.h"
 
 Player::Player() {
-	x = PLAYER_STARTX;
-	y = PLAYER_STARTY;
+	x = 0;
+	y = 0;
 	velocityX = 0;
 	velocityY = 0;
 	speed = 5.0f;
@@ -12,6 +12,32 @@ Player::Player() {
 Player::~Player() {}
 
 void Player::Update(const std::vector<Block>&blocks) {
+	// 接地判定の初期化
+	isGrounded = false;
+
+	// 現在の重力方向に応じて速度を加算、制御する
+	switch (GravityManager::currentDir)
+	{
+	case GravityDir::Down:
+		velocityY += GRAVITY;
+		if (velocityY > GRAVITY_MAX)velocityY = GRAVITY_MAX;
+		break;
+	case GravityDir::Up:
+		velocityY -= GRAVITY;
+		if (velocityY < -GRAVITY_MAX)velocityY = -GRAVITY_MAX;
+		break;
+	case GravityDir::Right:
+		velocityX += GRAVITY;
+		if (velocityX > GRAVITY_MAX)velocityX = GRAVITY_MAX;
+		break;
+	case GravityDir::Left:
+		velocityX -= GRAVITY;
+		if (velocityX < -GRAVITY_MAX)velocityX = -GRAVITY_MAX;
+		break;
+	default:
+		break;
+	}
+
 	// =============================================
 	// X軸方向の移動と当たり判定
 	// =============================================
@@ -22,9 +48,14 @@ void Player::Update(const std::vector<Block>&blocks) {
 		if (IsHitAABB(GetRect(), block.GetRect())) {
 			if (velocityX > 0.0f) {
 				x = block.GetRect().Left() - PLAYER_SIZE - PLA_BLO_GAP;
+
+				// 右に向かって落下しているとき、そこが床になる
+				if (GravityManager::currentDir == GravityDir::Right)isGrounded = true;
 			}
 			else if (velocityX < 0.0f) {
 				x = block.GetRect().Right() + PLA_BLO_GAP;
+				// 左に向かって落下しているとき、そこが床になる
+				if (GravityManager::currentDir == GravityDir::Left)isGrounded = true;
 			}
 
 			velocityX = 0.0f; // 壁にぶつかったら横方向速度をリセット
@@ -34,42 +65,45 @@ void Player::Update(const std::vector<Block>&blocks) {
 	// =============================================
 	// Y軸方向の移動と当たり判定
 	// =============================================
-	velocityY += GRAVITY;
-	if (velocityY > GRAVITY_MAX) { velocityY = GRAVITY_MAX; }
-
 	y += velocityY;
-
-	// 初期化
-	isGrounded = false;
 
 	for (const auto& block : blocks) {
 		// 当たり判定
 		if (IsHitAABB(GetRect(), block.GetRect())) {
 			if (velocityY > 0.0f) {
 				y = block.GetRect().Top() - PLAYER_SIZE - PLA_BLO_GAP;
-				velocityY = 0.0f;		// 落下を止める
-				isGrounded = true;		// 着地フラグをオンにする
+				// 下に向かって落下しているとき、そこが床になる
+				if (GravityManager::currentDir == GravityDir::Down)isGrounded = true;
 			}
 			else if (velocityY < 0.0f) {
 				y = block.GetRect().Bottom() + PLA_BLO_GAP;
+				// 上に向かって落下しているとき、そこが床になる
+				if (GravityManager::currentDir == GravityDir::Up)isGrounded = true;
 			}
 
 			velocityY = 0.0f; // 壁にぶつかったら縦方向速度をリセット
 		}
 	}
-
-	// 重力計算
-	if (!isGrounded) {
-		velocityY += GRAVITY;
-	}
 }
 
 void Player::Draw(float centerX, float centerY, float angle) const {
-	float newX, newY;
+	// プレイヤーの中心座標を計算する
+	float playerCenterX = x + (PLAYER_SIZE / 2.0f);
+	float playerCenterY = y + (PLAYER_SIZE / 2.0f);
 
-	// 自分の座標(x, y)を回転させた先の座標(newX, newY)で計算
-	GetRotatedPosition(centerX, centerY, x, y, &newX, &newY, angle);
+	float rotatedCenterX, rotatedCenterY;
 
-	DrawBox(newX, newY, newX + PLAYER_SIZE, newY + PLAYER_SIZE, Col.GetRed(), TRUE);
+	// 中心を基準に回転させる
+	GetRotatedPosition(centerX, centerY, playerCenterX, playerCenterY, &rotatedCenterX, &rotatedCenterY, angle);
+
+	// 回転後の中心座標から、描画関数に渡すための左上座標を逆算
+	float newX = rotatedCenterX - (PLAYER_SIZE / 2.0f);
+	float newY = rotatedCenterY - (PLAYER_SIZE / 2.0f);
+
+	// 座標を整数に変換してから描画する
+	int drawX = (int)(newX + 0.5f);
+	int drawY = (int)(newY + 0.5f);
+
+	DrawBox(drawX, drawY, drawX + PLAYER_SIZE, drawY + PLAYER_SIZE, Col.GetRed(), TRUE);
 }
 

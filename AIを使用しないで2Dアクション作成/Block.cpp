@@ -12,12 +12,20 @@ void Block::Update() {
 }
 
 void Block::Draw(float centerX, float centerY, float angle) const {
-	float newX, newY;
+	// ブロック自身の中心座標を計算
+	float blockCenterX = x + (BLOCK_SIZE / 2.0f);
+	float blockCenterY = y + (BLOCK_SIZE / 2.0f);
 
-	// 自分の座標(x, y)を回転させた先の座標(newX, newY)で計算
-	GetRotatedPosition(centerX, centerY, x, y, &newX, &newY, angle);
-	
-	// 座標を整数に変換してから描画する(回転後のブロックのズレを無くす為)
+	float rotatedCenterX, rotatedCenterY;
+
+	// ブロックの中心をステージの中心を軸にして回転させる
+	GetRotatedPosition(centerX, centerY, blockCenterX, blockCenterY, &rotatedCenterX, &rotatedCenterY, angle);
+
+	// 回転後の中心座標から描画関数に渡すための左上座標の逆算
+	float newX = rotatedCenterX - (BLOCK_SIZE / 2.0f);
+	float newY = rotatedCenterY - (BLOCK_SIZE / 2.0f);
+
+	// 座標を変数に変換
 	int drawX = (int)(newX + 0.5f);
 	int drawY = (int)(newY + 0.5f);
 
@@ -25,7 +33,6 @@ void Block::Draw(float centerX, float centerY, float angle) const {
 	{
 	case BlockType::Normal:
 		DrawBox(drawX, drawY, drawX + BLOCK_SIZE, drawY + BLOCK_SIZE, Col.GetGra(), TRUE);
-        DrawBox(drawX, drawY, drawX + BLOCK_SIZE, drawY + BLOCK_SIZE, Col.GetBla(), FALSE);
 		break;
 	case BlockType::Gravity:
 		DrawBox(drawX, drawY, drawX + BLOCK_SIZE, drawY + BLOCK_SIZE, Col.GetGre(), TRUE);

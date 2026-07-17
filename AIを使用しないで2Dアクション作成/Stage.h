@@ -22,21 +22,27 @@ private:
     // ステージの中心座標
     float centerX;
     float centerY;
+
+    // 画面中央に配置するための座標格納
+    int startX;
+    int startY;
     
 public:
     Stage();
     ~Stage();
 
-    // ステージの初期化（ここでブロックを配置する）
-    void Init();
+    // ステージの初期化
+    void Init(Player& p);
 
-    // 更新処理（操作中のプレイヤーを受け取り、ブロックとの当たり判定を行う）
+    // 更新処理
     void Update(Player& player);
 
-    // 描画処理（所属するすべてのブロックを描画する）
-    // ※プレイヤー情報も同時に格納して回転ロジックのアニメーション描画をやりやすくする
+    // 描画処理
     void Draw(const Player& player) const;
 
-    // テスト用の回転トリガー関数を追加
+    // 回転トリガー関数
     void TriggerRotation(RotationType type);
+
+    // ブロックセット関数
+    void SetStageBlock(int x, int y, BlockType bt);
 };
