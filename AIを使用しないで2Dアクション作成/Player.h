@@ -27,8 +27,9 @@ public:
     Rect GetRect() const {
         return { x, y, PLAYER_SIZE, PLAYER_SIZE };
     }
+
     // 地面に着地しているか判定取得
-    bool IsGraounded()const { return isGrounded; }
+    bool IsGrounded()const { return isGrounded; }
 
     // セッター
     void SetPosition(float setX, float setY) {

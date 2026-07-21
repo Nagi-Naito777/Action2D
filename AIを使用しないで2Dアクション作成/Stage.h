@@ -26,6 +26,11 @@ private:
     // 画面中央に配置するための座標格納
     int startX;
     int startY;
+
+    // 前回のキー入力状態を記憶する変数
+    int prevKeyRight = 0;
+    int prevKeyLeft = 0;
+    int prevKeyUp = 0;
     
 public:
     Stage();
@@ -44,5 +49,5 @@ public:
     void TriggerRotation(RotationType type);
 
     // ブロックセット関数
-    void SetStageBlock(int x, int y, BlockType bt);
+    void SetStageBlock(int x, int y, float move, BlockType bt);
 };

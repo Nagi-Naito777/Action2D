@@ -17,7 +17,7 @@ Stage::Stage() {
     for (int y = 0; y < STAGE_BLOCK_MAX; y++) {
         for (int x = 0; x < STAGE_BLOCK_MAX; x++) {
             if (y == 0 || y == STAGE_BLOCK_MAX - 1 || x == 0 || x == STAGE_BLOCK_MAX - 1) {
-                SetStageBlock(x, y, BlockType::Normal);
+                SetStageBlock(x, y, 0, BlockType::Normal);
             }
         }
     }
@@ -27,7 +27,7 @@ Stage::Stage() {
     // 中心のY座標
     centerY = WIN_MAX_Y / 2.0f;
 
-    stageNo = 1;
+    stageNo = 3;
 }
 Stage::~Stage() {}
 
@@ -72,15 +72,43 @@ void Stage::Init(Player &p) {
             case 1:
                 // ゴール配置
                 if (x == 10 && y == 1) {
-                    SetStageBlock(x, y, BlockType::Goal);
+                    SetStageBlock(x, y, 0, BlockType::Goal);
                 }
                 // 真ん中当たりに一本の線を引くようにブロックを配置
                 if ((y == 10 && (x < 18 && x > 2))) {
-                    SetStageBlock(x, y, BlockType::Normal);
+                    SetStageBlock(x, y, 0, BlockType::Normal);
                 }
                 break;
             case 2:
+                // ゴール配置
+                if (x == 10 && y == 1) {
+                    SetStageBlock(x, y, 0, BlockType::Goal);
+                }
+                // 重力ブロック配置
+                if (x == 5 && y == 15) {
+                    SetStageBlock(x, y, 0, BlockType::Gravity);
+                }
+                // 通常ブロックを配置
+                if ((y == 10 && (x < 18 && x > 2))) {
+                    SetStageBlock(x, y, 0, BlockType::Normal);
+                }
+                break;
             case 3:
+                // ゴール配置
+                if (x == 10 && y == 1) {
+                    SetStageBlock(x, y, 0, BlockType::Goal);
+                }
+                // 動くブロック配置
+                if (x == 10 && y == 15) {
+                    SetStageBlock(x, y, 200.0f, BlockType::MoveX);
+                }
+                if (x == 5 && y == 5) {
+                    SetStageBlock(x, y, 200.0f, BlockType::MoveY);
+                }
+                // 通常ブロックを配置
+                if ((y == 10 && (x < 18 && x > 2))) {
+                    SetStageBlock(x, y, 0, BlockType::Normal);
+                }
             default:
                 break;
             }
@@ -89,34 +117,47 @@ void Stage::Init(Player &p) {
 }
 
 void Stage::Update(Player& player) {
-    // ==========================================
-    // 【テスト用】キー入力で回転を発動させる
-    // ==========================================
-    if (CheckHitKey(KEY_INPUT_RIGHT) == 1) {
-        TriggerRotation(RotationType::Right90);
-    }
-    if (CheckHitKey(KEY_INPUT_LEFT) == 1) {
-        TriggerRotation(RotationType::Left90);
-    }
-    if (CheckHitKey(KEY_INPUT_UP) == 1) {
-        TriggerRotation(RotationType::Turn180);
+    // 現在のキー状態を取得
+    int currentKeyRight = CheckHitKey(KEY_INPUT_RIGHT);
+    int currentKeyLeft = CheckHitKey(KEY_INPUT_LEFT);
+    int currentKeyUp = CheckHitKey(KEY_INPUT_UP);
+
+    // 「押した瞬間」かどうかを判定
+    bool isTriggerRight = (currentKeyRight == 1 && prevKeyRight == 0);
+    bool isTriggerLeft = (currentKeyLeft == 1 && prevKeyLeft == 0);
+    bool isTriggerUp = (currentKeyUp == 1 && prevKeyUp == 0);
+
+    // 次フレームのために、現在のキー状態を記憶
+    prevKeyRight = currentKeyRight;
+    prevKeyLeft = currentKeyLeft;
+    prevKeyUp = currentKeyUp;
+
+    // もしプレイヤーが地面にいたら回転(地面に接地していたら)
+    if (player.IsGrounded()) {
+        if (isTriggerRight) {
+            TriggerRotation(RotationType::Right90);
+        }
+        if (isTriggerLeft) {
+            TriggerRotation(RotationType::Left90);
+        }
+        if (isTriggerUp) {
+            TriggerRotation(RotationType::Turn180);
+        }
     }
 
-    // ==========================================
-    // 本来の更新処理
-    // ==========================================
+    // 更新処理
     logic.Update();
 
     if (currentState == StageState::Rotating) {
-        // 回転が完全に終わったか（PhaseがNoneに戻ったか）をチェック
+        // 回転が終わったかチェック
         if (!logic.IsRotating()) {
-            currentState = StageState::Normal; // 通常状態に戻す
+            currentState = StageState::Normal;
         }
-        return; // 回転中は以下の処理（重力や当たり判定）を行わない
+        return; // 回転中は以下の処理を行わない
     }
 
     // --- ここから下は通常時のみ実行 ---
-    for (auto& block : blocks) { block.Update(); }
+    for (auto& block : blocks) { block.Update(blocks, player.GetRect()); }
     player.Update(blocks);
 }
 
@@ -174,12 +215,13 @@ void Stage::TriggerRotation(RotationType type) {
 }
 
 // ブロックセット関数
-void Stage::SetStageBlock(int x, int y, BlockType bt) {
+void Stage::SetStageBlock(int x, int y, float move, BlockType bt) {
     blocks.push_back(Block(
         startX + (x * BLOCK_SIZE),
         startY + (y * BLOCK_SIZE),
         BLOCK_SIZE,
         BLOCK_SIZE,
+        move,
         bt
     ));
 }
