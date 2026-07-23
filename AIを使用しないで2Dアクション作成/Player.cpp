@@ -7,6 +7,8 @@ Player::Player() {
 	velocityX = 0;
 	velocityY = 0;
 	speed = 5.0f;
+	carryVX = 0.0f;
+	carryVY = 0.0f;
 }
 
 Player::~Player() {}
@@ -14,6 +16,14 @@ Player::~Player() {}
 void Player::Update(const std::vector<Block>&blocks) {
 	// 接地判定の初期化
 	isGrounded = false;
+
+	// 動く床分の座標をずらす
+	x += carryVX;
+	y += carryVY;
+
+	// リセット
+	carryVX = 0.0f;
+	carryVY = 0.0f;
 
 	// 現在の重力方向に応じて速度を加算、制御する
 	switch (GravityManager::currentDir)
@@ -45,17 +55,26 @@ void Player::Update(const std::vector<Block>&blocks) {
 
 	for (const auto& block : blocks) {
 		// 当たり判定
-		if (IsHitAABB(GetRect(), block.GetRect())) {
+		if (IsHitAABB(GetRectX(), block.GetRect())) {
 			if (velocityX > 0.0f) {
 				x = block.GetRect().Left() - PLAYER_SIZE - PLA_BLO_GAP;
 
 				// 右に向かって落下しているとき、そこが床になる
-				if (GravityManager::currentDir == GravityDir::Right)isGrounded = true;
+				if (GravityManager::currentDir == GravityDir::Right) {
+					isGrounded = true;
+					// 直接座標を足さず、次回の移動用に保存
+					carryVX = block.GetMoveVelocityX();
+					carryVY = block.GetMoveVelocityY();
+				}
 			}
 			else if (velocityX < 0.0f) {
 				x = block.GetRect().Right() + PLA_BLO_GAP;
 				// 左に向かって落下しているとき、そこが床になる
-				if (GravityManager::currentDir == GravityDir::Left)isGrounded = true;
+				if (GravityManager::currentDir == GravityDir::Left) {
+					isGrounded = true;
+					carryVX = block.GetMoveVelocityX();
+					carryVY = block.GetMoveVelocityY();
+				}
 			}
 
 			velocityX = 0.0f; // 壁にぶつかったら横方向速度をリセット
@@ -69,16 +88,24 @@ void Player::Update(const std::vector<Block>&blocks) {
 
 	for (const auto& block : blocks) {
 		// 当たり判定
-		if (IsHitAABB(GetRect(), block.GetRect())) {
+		if (IsHitAABB(GetRectY(), block.GetRect())) {
 			if (velocityY > 0.0f) {
 				y = block.GetRect().Top() - PLAYER_SIZE - PLA_BLO_GAP;
 				// 下に向かって落下しているとき、そこが床になる
-				if (GravityManager::currentDir == GravityDir::Down)isGrounded = true;
+				if (GravityManager::currentDir == GravityDir::Down) {
+					isGrounded = true;
+					carryVX = block.GetMoveVelocityX();
+					carryVY = block.GetMoveVelocityY();
+				}
 			}
 			else if (velocityY < 0.0f) {
 				y = block.GetRect().Bottom() + PLA_BLO_GAP;
 				// 上に向かって落下しているとき、そこが床になる
-				if (GravityManager::currentDir == GravityDir::Up)isGrounded = true;
+				if (GravityManager::currentDir == GravityDir::Up) {
+					isGrounded = true;
+					carryVX = block.GetMoveVelocityX();
+					carryVY = block.GetMoveVelocityY();
+				}
 			}
 
 			velocityY = 0.0f; // 壁にぶつかったら縦方向速度をリセット

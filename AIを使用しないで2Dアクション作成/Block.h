@@ -50,4 +50,26 @@ public:
 
     // プレイヤー側からブロックの種類を確認するためのゲッター
     BlockType GetType() const { return type; }
+
+    // 動くブロックに合わせて移動できるようにする関数
+    float GetMoveVelocityX()const {
+        if (type == BlockType::MoveX) {
+            // trueならプラス、falseならマイナス方向に動く
+            return moveForward ? moveSpeed : -moveSpeed;
+        }
+        if (type == BlockType::Gravity) {
+            return velocityX;
+        }
+        return 0.0f;
+    }
+    float GetMoveVelocityY()const {
+        if (type == BlockType::MoveY) {
+            // trueならプラス、falseならマイナス方向に動く
+            return moveForward ? moveSpeed : -moveSpeed;
+        }
+        if (type == BlockType::Gravity) {
+            return velocityY;
+        }
+        return 0.0f;
+    }
 };
