@@ -37,7 +37,7 @@ public:
     ~Stage();
 
     // ステージの初期化
-    void Init(Player& p);
+    void Init(Player& p, int stage);
 
     // 更新処理
     void Update(Player& player);

@@ -32,6 +32,7 @@ Stateパターンを採用
 #include "PlayerController.h"
 #include "Block.h"
 #include "Stage.h"
+#include "SceneManager.h"
 
 // クラスのインスタンス化
 ColorManager Col;
@@ -40,7 +41,7 @@ FontManager Font;
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     ChangeWindowMode(TRUE);
     if (DxLib_Init() == -1) return -1;
-    SetWindowText(_T("スクエアターン"));        // ウィンドウのテキスト変更
+    SetWindowText(_T("ミステリアス リンネキューブ"));        // ウィンドウのテキスト変更
     SetGraphMode(WIN_MAX_X, WIN_MAX_Y, 32);     // ウィンドウのサイズ変更
     SetBackgroundColor(0, 0, 0);			// 背景色設定
     SetDrawScreen(DX_SCREEN_BACK);
@@ -50,10 +51,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     Font.Init();
 
     // 実体生成
-    Player player;
-    PlayerController controller(&player);
-    Stage stage;
-    stage.Init(player);
+    SceneManager sceneManager;
     
 
     while (
@@ -61,11 +59,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         ProcessMessage() == 0 &&        // ウィンドウズのメッセージ処理
         CheckHitKey(KEY_INPUT_ESCAPE) == 0)
     {
-        controller.Update();
-        stage.Update(player);
-        
-        stage.Draw(player);
-
+        sceneManager.Update(); // どのシーンか気にせずUpdateを呼ぶ！
+        sceneManager.Draw();   // どのシーンか気にせずDrawを呼ぶ！
         ScreenFlip();
     }
 

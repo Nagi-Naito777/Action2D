@@ -26,6 +26,20 @@
 #include "DxLib.h"
 #include <cmath>
 
+// シーン管理用列挙体
+enum class SceneName {
+    TITLE,
+    SELECT,
+    PLAY,
+    RESULT
+};
+
+// シーン間で共有するデータ
+struct SharedData {
+    int currentStageNo = 1;  // 選択されたステージ番号
+    bool isClear = false;    // クリアしたかどうか
+};
+
 // 回転用の四角形を描画するための座標を取得する関数
 void GetRotatedPosition(float centerX, float centerY, float x, float y,
     float* outX, float* outY, float angleDeg);

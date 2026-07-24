@@ -2,7 +2,9 @@
 #include "Collision.h"[
 #include "Block.h"
 #include "Player.h"
-#include "StageLogic.h"]
+#include "StageLogic.h"
+#include <fstream>
+#include <string>
 
 Stage::Stage() {
     // ステージ全体サイズ変数
@@ -13,106 +15,77 @@ Stage::Stage() {
     startX = (int)(WIN_MAX_X - stageTotalWidth) / 2.0f;
     startY = (int)(WIN_MAX_Y - stageTotalHeight) / 2.0f;
 
-    // 周りのブロックを設置するループ文(初期化)
-    for (int y = 0; y < STAGE_BLOCK_MAX; y++) {
-        for (int x = 0; x < STAGE_BLOCK_MAX; x++) {
-            if (y == 0 || y == STAGE_BLOCK_MAX - 1 || x == 0 || x == STAGE_BLOCK_MAX - 1) {
-                SetStageBlock(x, y, 0, BlockType::Normal);
-            }
-        }
-    }
-
     // 中心のX座標
     centerX = WIN_MAX_X / 2.0f;
     // 中心のY座標
     centerY = WIN_MAX_Y / 2.0f;
-
-    stageNo = 3;
 }
+
 Stage::~Stage() {}
 
-void Stage::Init(Player &p) {
+void Stage::Init(Player &p,int stage) {
+    // ステージ番号を格納
+    stageNo = stage;
+
     // 速度リセット
     p.SetVelocityX(0.0f);
     p.SetVelocityY(0.0f);
 
-    // ステージごとの初期グリッド（マス目）座標用の変数
-    int playerGridX = 0;
-    int playerGridY = 0;
+    // 古いブロックのデータを削除
+    blocks.clear();
 
-    // ステージ番号（stageNo）に応じて初期グリッド位置を設定
-    switch (stageNo) {
-    case 1:
-        playerGridX = 10; // 左から10番目のマス
-        playerGridY = 16; // 上から16番目のマス
-        break;
-    case 2:
-        playerGridX = 10;
-        playerGridY = 10;
-        break;
-    case 3:
-        playerGridX = 2;
-        playerGridY = 17;
-        break;
-    default:
-        playerGridX = 10;
-        playerGridY = 10;
-        break;
+    // 読み込みファイル名を決定
+    std::string fileName = "stage" + std::to_string(stageNo) + ".txt";
+
+    // テキストファイルを開く
+    std::ifstream file(fileName);
+
+    if (!file) {
+        // ファイルが見つからなかった時のエラー対策で周りを囲むだけにする
+        for (int y = 0; y < STAGE_BLOCK_MAX; y++) {
+            for (int x = 0; x < STAGE_BLOCK_MAX; x++) {
+                if (y == 0 || y == STAGE_BLOCK_MAX - 1 || x == 0 || x == STAGE_BLOCK_MAX - 1) {
+                    SetStageBlock(x, y, 0, BlockType::Normal);
+                }
+            }
+        }
+        return;
     }
 
-    // グリッド座標を、中央寄せを考慮したピクセル座標に変換してセット
-    float playerStartX = startX + (playerGridX * BLOCK_SIZE);
-    float playerStartY = startY + (playerGridY * BLOCK_SIZE);
-    p.SetPosition(playerStartX, playerStartY);
+    // テキストファイルから1行ずつ読み込む
+    std::string line;
+    int y = 0;
+    int blockMove = 200.0f; // ブロックの移動量
+    while (std::getline(file, line) && y < STAGE_BLOCK_MAX) {
+        // 1文字ずつ判定してブロックを設置
+        for (int x = 0; x < line.length() && x < STAGE_BLOCK_MAX; x++) {
+            char c = line[x];
 
-    // ステージの番号ごとに描画する内容を変更する
-    for (int y = 0; y < STAGE_BLOCK_MAX; y++) {
-        for (int x = 0; x < STAGE_BLOCK_MAX; x++) {
-            switch (stageNo) {
-            case 1:
-                // ゴール配置
-                if (x == 10 && y == 1) {
-                    SetStageBlock(x, y, 0, BlockType::Goal);
-                }
-                // 真ん中当たりに一本の線を引くようにブロックを配置
-                if ((y == 10 && (x < 18 && x > 2))) {
-                    SetStageBlock(x, y, 0, BlockType::Normal);
-                }
+            switch (c) {
+            case '1': // 通常ブロック
+                SetStageBlock(x, y, 0, BlockType::Normal);
                 break;
-            case 2:
-                // ゴール配置
-                if (x == 10 && y == 1) {
-                    SetStageBlock(x, y, 0, BlockType::Goal);
-                }
-                // 重力ブロック配置
-                if (x == 5 && y == 15) {
-                    SetStageBlock(x, y, 0, BlockType::Gravity);
-                }
-                // 通常ブロックを配置
-                if ((y == 10 && (x < 18 && x > 2))) {
-                    SetStageBlock(x, y, 0, BlockType::Normal);
-                }
+            case '2': // ゴール
+                SetStageBlock(x, y, 0, BlockType::Goal);
                 break;
-            case 3:
-                // ゴール配置
-                if (x == 10 && y == 1) {
-                    SetStageBlock(x, y, 0, BlockType::Goal);
-                }
-                // 動くブロック配置
-                if (x == 10 && y == 15) {
-                    SetStageBlock(x, y, 200.0f, BlockType::MoveX);
-                }
-                if (x == 5 && y == 5) {
-                    SetStageBlock(x, y, 200.0f, BlockType::MoveY);
-                }
-                // 通常ブロックを配置
-                if ((y == 10 && (x < 18 && x > 2))) {
-                    SetStageBlock(x, y, 0, BlockType::Normal);
-                }
+            case 'G': // 重力ブロック
+                SetStageBlock(x, y, 0, BlockType::Gravity);
+                break;
+            case 'X': // 横に動くブロック
+                SetStageBlock(x, y, blockMove, BlockType::MoveX);
+                break;
+            case 'Y': // 縦に動くブロック
+                SetStageBlock(x, y, blockMove, BlockType::MoveY);
+                break;
+            case 'P': // プレイヤーの初期位置
+                p.SetPosition(startX + (x * BLOCK_SIZE), startY + (y * BLOCK_SIZE));
+                break;
             default:
+                // "0"の場合は空白
                 break;
             }
         }
+        y++;
     }
 }
 
