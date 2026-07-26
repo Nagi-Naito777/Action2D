@@ -1,8 +1,10 @@
 #include "SceneManager.h"
 #include "TitleScene.h"
+#include "SelectScene.h"
+#include "PlayScene.h"
 
 SceneManager::SceneManager() {
-	currentScene = new TitleScene();
+	currentScene = new TitleScene(&sharedData);
 	currentScene->Init();
 	currentName = SceneName::TITLE;
 }
@@ -32,9 +34,9 @@ void SceneManager::ChangeScene(SceneName nextName) {
 
 	// êVÇµÇ¢ÉVÅ[ÉìÇê∂ê¨
 	switch (nextName) {
-	case SceneName::TITLE: currentScene = new TitleScene(); break;
-	case SceneName::SELECT:
-	case SceneName::PLAY:
+	case SceneName::TITLE:  currentScene = new TitleScene(&sharedData);  break;
+	case SceneName::SELECT: currentScene = new SelectScene(&sharedData); break;
+	case SceneName::PLAY:   currentScene = new PlayScene(&sharedData);   break;
 	case SceneName::RESULT:
 		break;
 	}

@@ -28,10 +28,6 @@ Stateパターンを採用
 
 #include "DxLib.h"
 #include "GameData.h"
-#include "Player.h"
-#include "PlayerController.h"
-#include "Block.h"
-#include "Stage.h"
 #include "SceneManager.h"
 
 // クラスのインスタンス化

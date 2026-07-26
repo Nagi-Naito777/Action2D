@@ -8,6 +8,9 @@ private:
     BaseScene* currentScene; // 現在実行中のシーン
     SceneName currentName;
 
+    // 共有データの実体
+    SharedData sharedData;
+
 public:
     SceneManager();
     ~SceneManager();

@@ -5,6 +5,8 @@
 class TitleScene :public BaseScene
 {
 public:
+	TitleScene(SharedData* data) : BaseScene(data) {}
+
 	void Init() override {};
 
 	SceneName Update() override;

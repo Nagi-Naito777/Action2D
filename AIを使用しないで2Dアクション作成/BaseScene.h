@@ -4,7 +4,15 @@
 
 class BaseScene
 {
+protected:
+	// すべてのシーンからアクセスできる共有データへのポインタ
+	SharedData* sharedData;
+
 public:
+	// コンストラクタ
+	BaseScene(SharedData* data) :sharedData(data) {}
+
+	// デストラクタ
 	virtual ~BaseScene() {}
 
 	// 初期化処理
