@@ -11,6 +11,9 @@ PlayScene::~PlayScene() {
 }
 
 void PlayScene::Init() {
+	// ステージ開始時の必須リセット
+	sharedData->isClear = false;
+
 	// ステージとプレイヤーの初期化
 	stage.Init(player,sharedData->currentStageNo);
 }
@@ -20,11 +23,24 @@ SceneName PlayScene::Update() {
 	controller->Update();
 
 	// ステージ処理
-	stage.Update(player);
+	bool isGoalReached = stage.Update(player);
 
-	// ESCキーでタイトルに戻る（デバッグ用にあると便利です）
-	if (CheckHitKey(KEY_INPUT_ESCAPE) == 1) {
+	// もしゴールしたらリザルトシーンへ移行
+	if (isGoalReached) {
+		// 共有データにクリアしたという判定を渡す
+		sharedData->isClear = true;
+
+		return SceneName::RESULT;
+	}
+
+	// ESCキーでタイトルに戻る
+	if (CheckHitKey(KEY_INPUT_ESCAPE)) {
 		return SceneName::TITLE;
+	}
+
+	// スペースキーでステージリセット
+	if (CheckHitKey(KEY_INPUT_SPACE)) {
+		Init();
 	}
 
 	return SceneName::PLAY;

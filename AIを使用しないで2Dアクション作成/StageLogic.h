@@ -30,6 +30,9 @@ public:
     // コンストラクタ
     StageLogic();
 
+    // 初期化処理
+    void Init();
+
     // 回転開始トリガー関数
     void StartRotation(RotationType type);
 

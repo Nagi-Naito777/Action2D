@@ -11,6 +11,15 @@ StageLogic::StageLogic() {
 	rotateSpeed = 0.0f;
 }
 
+void StageLogic::Init() {
+	currentPhase = RotationPhase::None;
+	timer = 0;
+	currentAngle = 0.0f;
+	targetAngle = 0.0f;
+	startAngle = 0.0f;
+	rotateSpeed = 0.0f;
+}
+
 // ‰ñ“]ŠJnƒgƒŠƒK[ŠÖ”
 void StageLogic::StartRotation(RotationType type) {
 	if (currentPhase != RotationPhase::None)return; // ‰ñ“]’†‚È‚çˆ—‚µ‚È‚¢

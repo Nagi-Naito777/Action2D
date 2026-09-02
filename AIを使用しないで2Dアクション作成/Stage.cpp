@@ -1,5 +1,5 @@
 #include "Stage.h"
-#include "Collision.h"[
+#include "Collision.h"
 #include "Block.h"
 #include "Player.h"
 #include "StageLogic.h"
@@ -24,6 +24,12 @@ Stage::Stage() {
 Stage::~Stage() {}
 
 void Stage::Init(Player &p,int stage) {
+    // 重力方向の初期化
+    GravityManager::currentDir = GravityDir::Down;
+
+    // ステージの回転角度を初期化
+    logic.Init();
+
     // ステージ番号を格納
     stageNo = stage;
 
@@ -89,7 +95,7 @@ void Stage::Init(Player &p,int stage) {
     }
 }
 
-void Stage::Update(Player& player) {
+bool Stage::Update(Player& player) {
     // 現在のキー状態を取得
     int currentKeyRight = CheckHitKey(KEY_INPUT_RIGHT);
     int currentKeyLeft = CheckHitKey(KEY_INPUT_LEFT);
@@ -126,12 +132,27 @@ void Stage::Update(Player& player) {
         if (!logic.IsRotating()) {
             currentState = StageState::Normal;
         }
-        return; // 回転中は以下の処理を行わない
+        return false; // 回転中は以下の処理を行わない
     }
 
     // --- ここから下は通常時のみ実行 ---
+    
+    // ゴール判定フラグ
+    bool isGoal = false;
+
+    // ブロックの更新ループ
+    for (auto& block : blocks) {
+        // BlockのUpdateがtrue(ゴール)を返したら、フラグを立てる
+        if (block.Update(blocks, player.GetRect())) {
+            isGoal = true;
+        }
+    }
+
     for (auto& block : blocks) { block.Update(blocks, player.GetRect()); }
     player.Update(blocks);
+
+    // ゴールに触れたら true を返す
+    return isGoal;
 }
 
 void Stage::Draw(const Player& player) const {

@@ -54,6 +54,11 @@ void Player::Update(const std::vector<Block>&blocks) {
 	x += velocityX;
 
 	for (const auto& block : blocks) {
+		// ゴールブロックのみ判定を除外する(スキップする)
+		if (block.GetType() == BlockType::Goal) {
+			continue;
+		}
+
 		// 当たり判定
 		if (IsHitAABB(GetRectX(), block.GetRect())) {
 			if (velocityX > 0.0f) {
@@ -87,6 +92,11 @@ void Player::Update(const std::vector<Block>&blocks) {
 	y += velocityY;
 
 	for (const auto& block : blocks) {
+		// ゴールブロックのみ判定を除外する(スキップする)
+		if (block.GetType() == BlockType::Goal) {
+			continue;
+		}
+
 		// 当たり判定
 		if (IsHitAABB(GetRectY(), block.GetRect())) {
 			if (velocityY > 0.0f) {

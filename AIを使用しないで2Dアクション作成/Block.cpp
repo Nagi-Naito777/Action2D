@@ -11,7 +11,7 @@ Block::Block(float startX, float startY, float w, float h, float move, BlockType
 	moveMax = move;
 }
 
-void Block::Update(const std::vector<Block>& blocks, const Rect& playerRect) {
+bool Block::Update(const std::vector<Block>& blocks, const Rect& playerRect) {
 	switch (type)
 	{
 	case BlockType::Normal:
@@ -95,6 +95,11 @@ void Block::Update(const std::vector<Block>& blocks, const Rect& playerRect) {
 		}
 		break;
 	case BlockType::Goal:
+		// ƒS[ƒ‹‚ÆƒvƒŒƒCƒ„[‚Ì“–‚½‚è”»’è
+		if (IsHitAABB(GetRect(), playerRect)) {
+			// ƒS[ƒ‹‚ÉG‚ê‚½
+			return true;
+		}
 		break;
 	case BlockType::Max:
 		break;
@@ -103,6 +108,9 @@ void Block::Update(const std::vector<Block>& blocks, const Rect& playerRect) {
 	default:
 		break;
 	}
+
+	// ƒS[ƒ‹‚ÉG‚ê‚È‚©‚Á‚½
+	return false;
 }
 
 void Block::Draw(float centerX, float centerY, float angle) const {

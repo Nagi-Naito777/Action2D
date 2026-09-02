@@ -39,7 +39,7 @@ public:
     Block(float startX, float startY, float w, float h, float move, BlockType t);
 
     // XVˆ—
-    void Update(const std::vector<Block>& blocks, const Rect& playerRect);
+    bool Update(const std::vector<Block>& blocks, const Rect& playerRect);
 
     // •`‰æŠÖ”
     void Draw(float centerX, float centerY, float angle) const;

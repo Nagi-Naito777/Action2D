@@ -2,6 +2,7 @@
 #include "TitleScene.h"
 #include "SelectScene.h"
 #include "PlayScene.h"
+#include "ResultScene.h"
 
 SceneManager::SceneManager() {
 	currentScene = new TitleScene(&sharedData);
@@ -37,7 +38,7 @@ void SceneManager::ChangeScene(SceneName nextName) {
 	case SceneName::TITLE:  currentScene = new TitleScene(&sharedData);  break;
 	case SceneName::SELECT: currentScene = new SelectScene(&sharedData); break;
 	case SceneName::PLAY:   currentScene = new PlayScene(&sharedData);   break;
-	case SceneName::RESULT:
+	case SceneName::RESULT: currentScene = new ResultScene(&sharedData); break;
 		break;
 	}
 

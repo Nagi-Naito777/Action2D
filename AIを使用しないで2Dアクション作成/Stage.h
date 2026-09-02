@@ -40,7 +40,7 @@ public:
     void Init(Player& p, int stage);
 
     // XVˆ—
-    void Update(Player& player);
+    bool Update(Player& player);
 
     // •`‰æˆ—
     void Draw(const Player& player) const;
