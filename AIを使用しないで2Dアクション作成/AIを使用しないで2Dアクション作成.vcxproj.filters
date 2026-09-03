@@ -103,5 +103,8 @@
     <Text Include="stage2.txt">
       <Filter>リソース ファイル</Filter>
     </Text>
+    <Text Include="stage3.txt">
+      <Filter>リソース ファイル</Filter>
+    </Text>
   </ItemGroup>
 </Project>

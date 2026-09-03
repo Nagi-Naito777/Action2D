@@ -148,7 +148,6 @@ bool Stage::Update(Player& player) {
         }
     }
 
-    for (auto& block : blocks) { block.Update(blocks, player.GetRect()); }
     player.Update(blocks);
 
     // ƒS[ƒ‹‚ÉG‚ê‚½‚ç true ‚ğ•Ô‚·
