@@ -8,6 +8,7 @@
 enum class BlockType {
     Normal,     // 通常
     Gravity,    // 重力ブロック
+    Switch,     // スイッチブロック(判定があることでゴールが出現するギミック)
     MoveX,      // 横に動く床
     MoveY,      // 縦に動く床
     Goal,       // ゴールブロック
@@ -34,6 +35,9 @@ private:
     bool moveForward = true;    // 往復の方向フラグ
     float moveMax;              // 動く量の最大値
 
+    // ブロックが有効かどうか
+    bool isActive = true;
+
     BlockType type;
 public:
     Block(float startX, float startY, float w, float h, float move, BlockType t);
@@ -47,6 +51,10 @@ public:
     Rect GetRect()const {
         return { x, y, BLOCK_SIZE, BLOCK_SIZE };
     }
+
+    // 有効状態を切り替える関数
+    void SetActive(bool active) { isActive = active; }
+    bool IsActive() const { return isActive; }
 
     // プレイヤー側からブロックの種類を確認するためのゲッター
     BlockType GetType() const { return type; }

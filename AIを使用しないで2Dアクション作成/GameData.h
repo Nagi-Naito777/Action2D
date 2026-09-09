@@ -31,7 +31,8 @@ enum class SceneName {
     TITLE,
     SELECT,
     PLAY,
-    RESULT
+    RESULT,
+    DEBUG       // ステージ作成モードの画面
 };
 
 // シーン間で共有するデータ

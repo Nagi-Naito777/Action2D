@@ -31,6 +31,9 @@ private:
     int prevKeyRight = 0;
     int prevKeyLeft = 0;
     int prevKeyUp = 0;
+
+    bool hasSwitch = false;  // ステージ内にスイッチが存在するか
+    int goalBlockIndex = -1; // blocks配列の中でのゴールブロックの番号
     
 public:
     Stage();

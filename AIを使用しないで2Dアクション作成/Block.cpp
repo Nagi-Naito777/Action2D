@@ -139,6 +139,11 @@ void Block::Draw(float centerX, float centerY, float angle) const {
 	case BlockType::Gravity:
 		DrawBox(drawX, drawY, drawX + BLOCK_SIZE, drawY + BLOCK_SIZE, Col.GetGre(), TRUE);
 		break;
+	case BlockType::Switch:
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128);
+		DrawBox(drawX, drawY, drawX + BLOCK_SIZE, drawY + BLOCK_SIZE, Col.GetSky(), FALSE);
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+		break;
 	case BlockType::MoveX:
 	case BlockType::MoveY:
 		DrawBox(drawX, drawY, drawX + BLOCK_SIZE, drawY + BLOCK_SIZE, Col.GetWhi(), TRUE);

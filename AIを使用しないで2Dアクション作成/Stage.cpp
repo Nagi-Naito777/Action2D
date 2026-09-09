@@ -40,6 +40,10 @@ void Stage::Init(Player &p,int stage) {
     // 古いブロックのデータを削除
     blocks.clear();
 
+    // ギミック用変数のリセット
+    hasSwitch = false;
+    goalBlockIndex = -1;
+
     // 読み込みファイル名を決定
     std::string fileName = "stage" + std::to_string(stageNo) + ".txt";
 
@@ -73,9 +77,16 @@ void Stage::Init(Player &p,int stage) {
                 break;
             case '2': // ゴール
                 SetStageBlock(x, y, 0, BlockType::Goal);
+                // ゴールブロックが配列のどこに追加されたかを記憶する
+                goalBlockIndex = blocks.size() - 1;
                 break;
             case 'G': // 重力ブロック
                 SetStageBlock(x, y, 0, BlockType::Gravity);
+                break;
+            case 'S': // スイッチブロック
+                SetStageBlock(x, y, 0, BlockType::Switch);
+                // スイッチブロックの存在を記憶
+                hasSwitch = true;
                 break;
             case 'X': // 横に動くブロック
                 SetStageBlock(x, y, blockMove, BlockType::MoveX);
@@ -137,14 +148,51 @@ bool Stage::Update(Player& player) {
 
     // --- ここから下は通常時のみ実行 ---
     
+    // スイッチブロックのギミック処理
+    if (hasSwitch && goalBlockIndex != -1) {
+        bool isSwitchPressed = false;
+
+        // スイッチブロックを探して重なり判定を行う
+        for (auto& switchBlock : blocks) {
+            // もし種類がスイッチブロックなら
+            if (switchBlock.GetType() == BlockType::Switch) {
+                // プレイヤーが重なっているか判定
+                if (IsHitAABB(switchBlock.GetRect(), player.GetRect())) {
+                    isSwitchPressed = true;
+                    break;
+                }
+
+                // 他のブロックが重なってるか判定
+                for (auto& otherBlock : blocks) {
+                    // 自分自身、または「無効なブロック」との判定はスキップ
+                    if (&switchBlock == &otherBlock || !otherBlock.IsActive()) {
+                        continue;
+                    }
+
+                    // AABB判定を行う
+                    if (IsHitAABB(switchBlock.GetRect(), otherBlock.GetRect())) {
+                        isSwitchPressed = true;
+                        break;
+                    }
+                }
+            }
+            if (isSwitchPressed) break; // 1つでも押されていればループを抜ける
+        }
+
+        // スイッチが押されていればゴールを出現させ、離れれば隠す
+        blocks[goalBlockIndex].SetActive(isSwitchPressed);
+    }
+
     // ゴール判定フラグ
     bool isGoal = false;
 
     // ブロックの更新ループ
     for (auto& block : blocks) {
-        // BlockのUpdateがtrue(ゴール)を返したら、フラグを立てる
-        if (block.Update(blocks, player.GetRect())) {
-            isGoal = true;
+        if (block.IsActive()) {
+            // BlockのUpdateがtrue(ゴール)を返したら、フラグを立てる
+            if (block.Update(blocks, player.GetRect())) {
+                isGoal = true;
+            }
         }
     }
 

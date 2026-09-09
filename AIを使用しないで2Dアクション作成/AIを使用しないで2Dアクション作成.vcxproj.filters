@@ -1,110 +1,137 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="ソース ファイル">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    <Filter Include="ステージ管理">
+      <UniqueIdentifier>{ed917425-1334-4bd2-8701-559f2a24f996}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ヘッダー ファイル">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    <Filter Include="プレイヤー管理">
+      <UniqueIdentifier>{576f4b31-5cae-4a39-9a50-666ad603eb3c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="リソース ファイル">
+    <Filter Include="メイン実行ファイル">
+      <UniqueIdentifier>{5e056ec3-23e5-49c7-a9d9-8e4a8287a07b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ステージファイル">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="ブロック管理">
+      <UniqueIdentifier>{9d0ba5b6-cbbc-4411-8182-94254000f7e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="物理演算">
+      <UniqueIdentifier>{7e818b3d-5b33-4c3f-bf57-80efadd13f97}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ステージギミックファイル">
+      <UniqueIdentifier>{4404ce1d-c66f-407f-b02b-66626ac67035}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="シーン管理cppファイル">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="シーン管理ヘッダーファイル">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Player.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="PlayerController.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Block.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Collision.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Stage.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="StageLogic.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="GameData.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="TitleScene.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>シーン管理cppファイル</Filter>
     </ClCompile>
     <ClCompile Include="SceneManager.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>シーン管理cppファイル</Filter>
     </ClCompile>
     <ClCompile Include="PlayScene.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>シーン管理cppファイル</Filter>
     </ClCompile>
     <ClCompile Include="SelectScene.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>シーン管理cppファイル</Filter>
     </ClCompile>
     <ClCompile Include="ResultScene.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>シーン管理cppファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugScene.cpp">
+      <Filter>シーン管理cppファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Stage.cpp">
+      <Filter>ステージ管理</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>メイン実行ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="GameData.cpp">
+      <Filter>メイン実行ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>プレイヤー管理</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerController.cpp">
+      <Filter>プレイヤー管理</Filter>
+    </ClCompile>
+    <ClCompile Include="Block.cpp">
+      <Filter>ブロック管理</Filter>
+    </ClCompile>
+    <ClCompile Include="Collision.cpp">
+      <Filter>物理演算</Filter>
+    </ClCompile>
+    <ClCompile Include="StageLogic.cpp">
+      <Filter>ステージギミックファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Player.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="GameData.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="PlayerController.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Block.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Collision.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Stage.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="StageLogic.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="BaseScene.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>シーン管理ヘッダーファイル</Filter>
     </ClInclude>
     <ClInclude Include="TitleScene.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>シーン管理ヘッダーファイル</Filter>
     </ClInclude>
     <ClInclude Include="SceneManager.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>シーン管理ヘッダーファイル</Filter>
     </ClInclude>
     <ClInclude Include="PlayScene.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>シーン管理ヘッダーファイル</Filter>
     </ClInclude>
     <ClInclude Include="SelectScene.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>シーン管理ヘッダーファイル</Filter>
     </ClInclude>
     <ClInclude Include="ResultScene.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>シーン管理ヘッダーファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugScene.h">
+      <Filter>シーン管理ヘッダーファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Stage.h">
+      <Filter>ステージ管理</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>プレイヤー管理</Filter>
+    </ClInclude>
+    <ClInclude Include="GameData.h">
+      <Filter>メイン実行ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerController.h">
+      <Filter>プレイヤー管理</Filter>
+    </ClInclude>
+    <ClInclude Include="Block.h">
+      <Filter>ブロック管理</Filter>
+    </ClInclude>
+    <ClInclude Include="Collision.h">
+      <Filter>物理演算</Filter>
+    </ClInclude>
+    <ClInclude Include="StageLogic.h">
+      <Filter>ステージギミックファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="stage1.txt">
-      <Filter>リソース ファイル</Filter>
+      <Filter>ステージファイル</Filter>
     </Text>
     <Text Include="stage2.txt">
-      <Filter>リソース ファイル</Filter>
+      <Filter>ステージファイル</Filter>
     </Text>
     <Text Include="stage3.txt">
-      <Filter>リソース ファイル</Filter>
+      <Filter>ステージファイル</Filter>
+    </Text>
+    <Text Include="stage4.txt">
+      <Filter>ステージファイル</Filter>
     </Text>
   </ItemGroup>
 </Project>
