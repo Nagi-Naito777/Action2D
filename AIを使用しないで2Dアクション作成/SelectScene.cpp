@@ -18,6 +18,11 @@ SceneName SelectScene::Update() {
         sharedData->currentStageNo = 4;
         return SceneName::PLAY;
     }
+    // スペースキーでデバッグモードへ移行
+    if (CheckHitKey(KEY_INPUT_SPACE) == 1) {
+        sharedData->currentStageNo = 99;
+        return SceneName::DEBUG;
+    }
     return SceneName::SELECT;
 }
 

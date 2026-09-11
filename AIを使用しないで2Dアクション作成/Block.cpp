@@ -11,7 +11,52 @@ Block::Block(float startX, float startY, float w, float h, float move, BlockType
 	moveMax = move;
 }
 
+void Block::MoveAndCheckCollision(const std::vector<Block>& blocks, bool isXAxis) {
+	// X軸かY軸かで、操作する変数への「参照」を切り替える
+	float& pos = isXAxis ? x : y;
+	float& vel = isXAxis ? velocityX : velocityY;
+
+	// 移動量を加算
+	pos += vel;
+
+	for (const auto& block : blocks) {
+		// 自分自身との判定はスキップ
+		if (&block == this) {
+			continue;
+		}
+		// ゴール、スイッチ、他の重力ブロック、無効状態のブロックはすり抜ける
+		if (block.GetType() == BlockType::Goal ||
+			block.GetType() == BlockType::Switch ||
+			//block.GetType() == BlockType::Gravity ||
+			!block.IsActive()) {
+			continue;
+		}
+
+		// 当たり判定
+		if (IsHitAABB(GetRect(), block.GetRect())) {
+			if (vel > 0.0f) {
+				// プラス方向(右 または 下)
+				pos = isXAxis ? (block.GetRect().Left() - BLOCK_SIZE)
+					: (block.GetRect().Top() - BLOCK_SIZE);
+			}
+			else if (vel < 0.0f) {
+				// マイナス方向(左 または 上)
+				pos = isXAxis ? block.GetRect().Right()
+					: block.GetRect().Bottom();
+			}
+
+			// 壁に当たったら速度をリセット
+			vel = 0.0f;
+		}
+	}
+}
+
 bool Block::Update(const std::vector<Block>& blocks, const Rect& playerRect) {
+	// 無効状態(押されていない時のゴール等)なら、更新・ゴール判定を行わずに終わる
+	if (!IsActive()) {
+		return false;
+	}
+	
 	switch (type)
 	{
 	case BlockType::Normal:
@@ -25,50 +70,11 @@ bool Block::Update(const std::vector<Block>& blocks, const Rect& playerRect) {
 		case GravityDir::Right:	velocityX += 0.5f; break;
 		case GravityDir::Left:	velocityX -= 0.5f; break;
 		}
-		// ブロック同士のX軸当たり判定
-		x += velocityX;
-		for (const auto& block : blocks) {
-			// 自分自身との判定はスキップ
-			if (&block == this)continue;
 
-			if (IsHitAABB(GetRect(), block.GetRect())) {
-				if (velocityX > 0.0f) {
-					x = block.GetRect().Left() - BLOCK_SIZE;
-				}
-				else if (velocityX < 0.0f) {
-					x = block.GetRect().Right();
-				}
-				velocityX = 0.0f;	// 壁に当たったらリセット
-			}
-		}
-		// プレイヤーとのX軸当たり判定(貫通防止)
-		if (IsHitAABB(GetRect(), playerRect)) {
-			if (velocityX > 0.0f) { x = playerRect.Left() - BLOCK_SIZE; }
-			else if (velocityX < 0.0f) { x = playerRect.Right(); }
-			velocityX = 0.0f;
-		}
+		// 移動と当たり判定関数
+		MoveAndCheckCollision(blocks, true);  // X軸の移動と判定
+		MoveAndCheckCollision(blocks, false); // Y軸の移動と判定
 
-		// ブロック同士のY軸当たり判定
-		y += velocityY;
-		for (const auto& block : blocks) {
-			if (&block == this)continue;
-
-			if (IsHitAABB(GetRect(), block.GetRect())) {
-				if (velocityY > 0.0f) {
-					y = block.GetRect().Top() - BLOCK_SIZE;
-				}
-				else if (velocityY < 0.0f) {
-					y = block.GetRect().Bottom();
-				}
-				velocityY = 0.0f;	// 壁に当たったらリセット
-			}
-		}
-		// プレイヤーとのY軸当たり判定(貫通防止)
-		if (IsHitAABB(GetRect(), playerRect)) {
-			if (velocityY > 0.0f) { y = playerRect.Top() - BLOCK_SIZE; }
-			else if (velocityY < 0.0f) { y = playerRect.Bottom(); }
-			velocityY = 0.0f;
-		}
 		break;
 	case BlockType::MoveX:
 		// 横に動くブロックの移動処理
@@ -114,6 +120,11 @@ bool Block::Update(const std::vector<Block>& blocks, const Rect& playerRect) {
 }
 
 void Block::Draw(float centerX, float centerY, float angle) const {
+	// 無効状態(スイッチが押されていない時)なら描画しない
+	if (!IsActive()) {
+		return;
+	}
+	
 	// ブロック自身の中心座標を計算
 	float blockCenterX = x + (BLOCK_SIZE / 2.0f);
 	float blockCenterY = y + (BLOCK_SIZE / 2.0f);
@@ -140,8 +151,9 @@ void Block::Draw(float centerX, float centerY, float angle) const {
 		DrawBox(drawX, drawY, drawX + BLOCK_SIZE, drawY + BLOCK_SIZE, Col.GetGre(), TRUE);
 		break;
 	case BlockType::Switch:
+		// スイッチブロックのみ少し透けるようにする
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128);
-		DrawBox(drawX, drawY, drawX + BLOCK_SIZE, drawY + BLOCK_SIZE, Col.GetSky(), FALSE);
+		DrawBox(drawX, drawY, drawX + BLOCK_SIZE, drawY + BLOCK_SIZE, Col.GetSky(), TRUE);
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 		break;
 	case BlockType::MoveX:

@@ -40,7 +40,7 @@ void SceneManager::ChangeScene(SceneName nextName) {
 	case SceneName::SELECT: currentScene = new SelectScene(&sharedData); break;
 	case SceneName::PLAY:   currentScene = new PlayScene(&sharedData);   break;
 	case SceneName::RESULT: currentScene = new ResultScene(&sharedData); break;
-	//case SceneName::DEBUG:  currentScene = new DebugScene(&sharedData);  break;
+	case SceneName::DEBUG:  currentScene = new DebugScene(&sharedData);  break;
 		break;
 		break;
 	}

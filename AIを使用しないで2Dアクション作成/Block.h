@@ -39,6 +39,9 @@ private:
     bool isActive = true;
 
     BlockType type;
+
+    // ˆÚ“®‚Æ“–‚½‚è”»’è‚ğ‹¤’Ê‰»‚·‚éŠÖ”
+    void MoveAndCheckCollision(const std::vector<Block>& blocks, bool isXAxis);
 public:
     Block(float startX, float startY, float w, float h, float move, BlockType t);
 

@@ -16,6 +16,9 @@ private:
     float carryVX, carryVY;
 
     bool isGrounded;    // 地面についているか判定
+
+    // 移動と当たり判定を共通化する関数
+    void MoveAndCheckCollision(const std::vector<Block>& blocks, bool isXAxis);
 public:
     Player();           // コンストラクタ
     ~Player();          // デストラクタ

@@ -13,6 +13,62 @@ Player::Player() {
 
 Player::~Player() {}
 
+// プレイヤーの当たり判定処理関数
+void Player::MoveAndCheckCollision(const std::vector<Block>& blocks, bool isXAxis) {
+	// X軸かY軸かで、操作する変数への「参照」を切り替える
+	float& pos = isXAxis ? x : y;
+	float& vel = isXAxis ? velocityX : velocityY;
+
+	// 重力方向の条件切り替え
+	GravityDir posGravity = isXAxis ? GravityDir::Right : GravityDir::Down;
+	GravityDir negGravity = isXAxis ? GravityDir::Left : GravityDir::Up;
+
+	// 移動させる計算
+	pos += vel;
+
+	for (const auto& block : blocks) {
+		// ゴール、スイッチ、無効状態のブロックは当たり判定処理をスキップ(すり抜けるようにする)
+		if (block.GetType() == BlockType::Goal ||
+			block.GetType() == BlockType::Switch ||
+			!block.IsActive()) {
+			continue;
+		}
+
+		// 毎回のループで最新状態のRectを取得
+		Rect playerRect = isXAxis ? GetRectX() : GetRectY();
+
+		// 当たり判定処理
+		if (IsHitAABB(playerRect, block.GetRect())) {
+			if (vel > 0.0f) {
+				// 右 または 下に向かって落下しているとき、そこが床になる
+				pos = isXAxis ? (block.GetRect().Left() - PLAYER_SIZE - PLA_BLO_GAP)
+					: (block.GetRect().Top() - PLAYER_SIZE - PLA_BLO_GAP);
+
+				if (GravityManager::currentDir == posGravity) {
+					isGrounded = true;
+					// 直接座標を足さず、次回の移動用に保存
+					carryVX = block.GetMoveVelocityX();
+					carryVY = block.GetMoveVelocityY();
+				}
+			}
+			else if (vel < 0.0f) {
+				// 左 または 上に向かって落下しているとき、そこが床になる
+				pos = isXAxis ? (block.GetRect().Right() + PLA_BLO_GAP)
+					: (block.GetRect().Bottom() + PLA_BLO_GAP);
+
+				if (GravityManager::currentDir == negGravity) {
+					isGrounded = true;
+					carryVX = block.GetMoveVelocityX();
+					carryVY = block.GetMoveVelocityY();
+				}
+			}
+
+			// 壁にぶつかったら速度をリセット
+			vel = 0.0f;
+		}
+	}
+}
+
 void Player::Update(const std::vector<Block>&blocks) {
 	// 接地判定の初期化
 	isGrounded = false;
@@ -49,78 +105,10 @@ void Player::Update(const std::vector<Block>&blocks) {
 	}
 
 	// =============================================
-	// X軸方向の移動と当たり判定
+	// 移動と当たり判定関数
 	// =============================================
-	x += velocityX;
-
-	for (const auto& block : blocks) {
-		// ゴールブロックのみ判定を除外する(スキップする)
-		if (block.GetType() == BlockType::Goal) {
-			continue;
-		}
-
-		// 当たり判定
-		if (IsHitAABB(GetRectX(), block.GetRect())) {
-			if (velocityX > 0.0f) {
-				x = block.GetRect().Left() - PLAYER_SIZE - PLA_BLO_GAP;
-
-				// 右に向かって落下しているとき、そこが床になる
-				if (GravityManager::currentDir == GravityDir::Right) {
-					isGrounded = true;
-					// 直接座標を足さず、次回の移動用に保存
-					carryVX = block.GetMoveVelocityX();
-					carryVY = block.GetMoveVelocityY();
-				}
-			}
-			else if (velocityX < 0.0f) {
-				x = block.GetRect().Right() + PLA_BLO_GAP;
-				// 左に向かって落下しているとき、そこが床になる
-				if (GravityManager::currentDir == GravityDir::Left) {
-					isGrounded = true;
-					carryVX = block.GetMoveVelocityX();
-					carryVY = block.GetMoveVelocityY();
-				}
-			}
-
-			velocityX = 0.0f; // 壁にぶつかったら横方向速度をリセット
-		}
-	}
-
-	// =============================================
-	// Y軸方向の移動と当たり判定
-	// =============================================
-	y += velocityY;
-
-	for (const auto& block : blocks) {
-		// ゴールブロックのみ判定を除外する(スキップする)
-		if (block.GetType() == BlockType::Goal) {
-			continue;
-		}
-
-		// 当たり判定
-		if (IsHitAABB(GetRectY(), block.GetRect())) {
-			if (velocityY > 0.0f) {
-				y = block.GetRect().Top() - PLAYER_SIZE - PLA_BLO_GAP;
-				// 下に向かって落下しているとき、そこが床になる
-				if (GravityManager::currentDir == GravityDir::Down) {
-					isGrounded = true;
-					carryVX = block.GetMoveVelocityX();
-					carryVY = block.GetMoveVelocityY();
-				}
-			}
-			else if (velocityY < 0.0f) {
-				y = block.GetRect().Bottom() + PLA_BLO_GAP;
-				// 上に向かって落下しているとき、そこが床になる
-				if (GravityManager::currentDir == GravityDir::Up) {
-					isGrounded = true;
-					carryVX = block.GetMoveVelocityX();
-					carryVY = block.GetMoveVelocityY();
-				}
-			}
-
-			velocityY = 0.0f; // 壁にぶつかったら縦方向速度をリセット
-		}
-	}
+	MoveAndCheckCollision(blocks, true);  // X軸の移動と判定
+	MoveAndCheckCollision(blocks, false); // Y軸の移動と判定
 }
 
 void Player::Draw(float centerX, float centerY, float angle) const {

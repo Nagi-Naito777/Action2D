@@ -49,7 +49,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     // 実体生成
     SceneManager sceneManager;
     
-
     while (
         ClearDrawScreen() == 0 &&		// 画面に描かれたものを消去する
         ProcessMessage() == 0 &&        // ウィンドウズのメッセージ処理
