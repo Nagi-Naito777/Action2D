@@ -1,4 +1,4 @@
-#include "Stage.h"
+ï»¿#include "Stage.h"
 #include "Collision.h"
 #include "Block.h"
 #include "Player.h"
@@ -7,51 +7,51 @@
 #include <string>
 
 Stage::Stage() {
-    // ƒXƒe[ƒW‘S‘ÌƒTƒCƒY•Ï”
+    // ã‚¹ãƒ†ãƒ¼ã‚¸å…¨ä½“ã‚µã‚¤ã‚ºå¤‰æ•°
     float stageTotalWidth = STAGE_BLOCK_MAX * BLOCK_SIZE;
     float stageTotalHeight = STAGE_BLOCK_MAX * BLOCK_SIZE;
 
-    // ‰æ–Ê’†‰›‚É”z’u‚·‚é‚½‚ß‚ÌÀ•WŠi”[
+    // ç”»é¢ä¸­å¤®ã«é…ç½®ã™ã‚‹ãŸã‚ã®åº§æ¨™æ ¼ç´
     startX = (int)(WIN_MAX_X - stageTotalWidth) / 2.0f;
     startY = (int)(WIN_MAX_Y - stageTotalHeight) / 2.0f;
 
-    // ’†S‚ÌXÀ•W
+    // ä¸­å¿ƒã®Xåº§æ¨™
     centerX = WIN_MAX_X / 2.0f;
-    // ’†S‚ÌYÀ•W
+    // ä¸­å¿ƒã®Yåº§æ¨™
     centerY = WIN_MAX_Y / 2.0f;
 }
 
 Stage::~Stage() {}
 
 void Stage::Init(Player &p,int stage) {
-    // d—Í•ûŒü‚Ì‰Šú‰»
+    // é‡åŠ›æ–¹å‘ã®åˆæœŸåŒ–
     GravityManager::currentDir = GravityDir::Down;
 
-    // ƒXƒe[ƒW‚Ì‰ñ“]Šp“x‚ğ‰Šú‰»
+    // ã‚¹ãƒ†ãƒ¼ã‚¸ã®å›è»¢è§’åº¦ã‚’åˆæœŸåŒ–
     logic.Init();
 
-    // ƒXƒe[ƒW”Ô†‚ğŠi”[
+    // ã‚¹ãƒ†ãƒ¼ã‚¸ç•ªå·ã‚’æ ¼ç´
     stageNo = stage;
 
-    // ‘¬“xƒŠƒZƒbƒg
+    // é€Ÿåº¦ãƒªã‚»ãƒƒãƒˆ
     p.SetVelocityX(0.0f);
     p.SetVelocityY(0.0f);
 
-    // ŒÃ‚¢ƒuƒƒbƒN‚Ìƒf[ƒ^‚ğíœ
+    // å¤ã„ãƒ–ãƒ­ãƒƒã‚¯ã®ãƒ‡ãƒ¼ã‚¿ã‚’å‰Šé™¤
     blocks.clear();
 
-    // ƒMƒ~ƒbƒN—p•Ï”‚ÌƒŠƒZƒbƒg
+    // ã‚®ãƒŸãƒƒã‚¯ç”¨å¤‰æ•°ã®ãƒªã‚»ãƒƒãƒˆ
     hasSwitch = false;
     goalBlockIndex = -1;
 
-    // “Ç‚İ‚İƒtƒ@ƒCƒ‹–¼‚ğŒˆ’è
+    // èª­ã¿è¾¼ã¿ãƒ•ã‚¡ã‚¤ãƒ«åã‚’æ±ºå®š
     std::string fileName = "stage" + std::to_string(stageNo) + ".txt";
 
-    // ƒeƒLƒXƒgƒtƒ@ƒCƒ‹‚ğŠJ‚­
+    // ãƒ†ã‚­ã‚¹ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ã‚’é–‹ã
     std::ifstream file(fileName);
 
     if (!file) {
-        // ƒtƒ@ƒCƒ‹‚ªŒ©‚Â‚©‚ç‚È‚©‚Á‚½‚ÌƒGƒ‰[‘Îô‚Åü‚è‚ğˆÍ‚Ş‚¾‚¯‚É‚·‚é
+        // ãƒ•ã‚¡ã‚¤ãƒ«ãŒè¦‹ã¤ã‹ã‚‰ãªã‹ã£ãŸæ™‚ã®ã‚¨ãƒ©ãƒ¼å¯¾ç­–ã§å‘¨ã‚Šã‚’å›²ã‚€ã ã‘ã«ã™ã‚‹
         for (int y = 0; y < STAGE_BLOCK_MAX; y++) {
             for (int x = 0; x < STAGE_BLOCK_MAX; x++) {
                 if (y == 0 || y == STAGE_BLOCK_MAX - 1 || x == 0 || x == STAGE_BLOCK_MAX - 1) {
@@ -62,43 +62,43 @@ void Stage::Init(Player &p,int stage) {
         return;
     }
 
-    // ƒeƒLƒXƒgƒtƒ@ƒCƒ‹‚©‚ç1s‚¸‚Â“Ç‚İ‚Ş
+    // ãƒ†ã‚­ã‚¹ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰1è¡Œãšã¤èª­ã¿è¾¼ã‚€
     std::string line;
     int y = 0;
-    int blockMove = 200.0f; // ƒuƒƒbƒN‚ÌˆÚ“®—Ê
+    int blockMove = 200.0f; // ãƒ–ãƒ­ãƒƒã‚¯ã®ç§»å‹•é‡
     while (std::getline(file, line) && y < STAGE_BLOCK_MAX) {
-        // 1•¶š‚¸‚Â”»’è‚µ‚ÄƒuƒƒbƒN‚ğİ’u
+        // 1æ–‡å­—ãšã¤åˆ¤å®šã—ã¦ãƒ–ãƒ­ãƒƒã‚¯ã‚’è¨­ç½®
         for (int x = 0; x < line.length() && x < STAGE_BLOCK_MAX; x++) {
             char c = line[x];
 
             switch (c) {
-            case '1': // ’ÊíƒuƒƒbƒN
+            case '1': // é€šå¸¸ãƒ–ãƒ­ãƒƒã‚¯
                 SetStageBlock(x, y, 0, BlockType::Normal);
                 break;
-            case '2': // ƒS[ƒ‹
+            case '2': // ã‚´ãƒ¼ãƒ«
                 SetStageBlock(x, y, 0, BlockType::Goal);
-                // ƒS[ƒ‹ƒuƒƒbƒN‚ª”z—ñ‚Ì‚Ç‚±‚É’Ç‰Á‚³‚ê‚½‚©‚ğ‹L‰¯‚·‚é
+                // ã‚´ãƒ¼ãƒ«ãƒ–ãƒ­ãƒƒã‚¯ãŒé…åˆ—ã®ã©ã“ã«è¿½åŠ ã•ã‚ŒãŸã‹ã‚’è¨˜æ†¶ã™ã‚‹
                 goalBlockIndex = blocks.size() - 1;
                 break;
-            case 'G': // d—ÍƒuƒƒbƒN
+            case 'G': // é‡åŠ›ãƒ–ãƒ­ãƒƒã‚¯
                 SetStageBlock(x, y, 0, BlockType::Gravity);
                 break;
-            case 'S': // ƒXƒCƒbƒ`ƒuƒƒbƒN
+            case 'S': // ã‚¹ã‚¤ãƒƒãƒãƒ–ãƒ­ãƒƒã‚¯
                 SetStageBlock(x, y, 0, BlockType::Switch);
-                // ƒXƒCƒbƒ`ƒuƒƒbƒN‚Ì‘¶İ‚ğ‹L‰¯
+                // ã‚¹ã‚¤ãƒƒãƒãƒ–ãƒ­ãƒƒã‚¯ã®å­˜åœ¨ã‚’è¨˜æ†¶
                 hasSwitch = true;
                 break;
-            case 'X': // ‰¡‚É“®‚­ƒuƒƒbƒN
+            case 'X': // æ¨ªã«å‹•ããƒ–ãƒ­ãƒƒã‚¯
                 SetStageBlock(x, y, blockMove, BlockType::MoveX);
                 break;
-            case 'Y': // c‚É“®‚­ƒuƒƒbƒN
+            case 'Y': // ç¸¦ã«å‹•ããƒ–ãƒ­ãƒƒã‚¯
                 SetStageBlock(x, y, blockMove, BlockType::MoveY);
                 break;
-            case 'P': // ƒvƒŒƒCƒ„[‚Ì‰ŠúˆÊ’u
+            case 'P': // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®åˆæœŸä½ç½®
                 p.SetPosition(startX + (x * BLOCK_SIZE), startY + (y * BLOCK_SIZE));
                 break;
             default:
-                // "0"‚Ìê‡‚Í‹ó”’
+                // "0"ã®å ´åˆã¯ç©ºç™½
                 break;
             }
         }
@@ -107,22 +107,22 @@ void Stage::Init(Player &p,int stage) {
 }
 
 bool Stage::Update(Player& player) {
-    // Œ»İ‚ÌƒL[ó‘Ô‚ğæ“¾
+    // ç¾åœ¨ã®ã‚­ãƒ¼çŠ¶æ…‹ã‚’å–å¾—
     int currentKeyRight = CheckHitKey(KEY_INPUT_RIGHT);
     int currentKeyLeft = CheckHitKey(KEY_INPUT_LEFT);
     int currentKeyUp = CheckHitKey(KEY_INPUT_UP);
 
-    // u‰Ÿ‚µ‚½uŠÔv‚©‚Ç‚¤‚©‚ğ”»’è
+    // ã€ŒæŠ¼ã—ãŸç¬é–“ã€ã‹ã©ã†ã‹ã‚’åˆ¤å®š
     bool isTriggerRight = (currentKeyRight == 1 && prevKeyRight == 0);
     bool isTriggerLeft = (currentKeyLeft == 1 && prevKeyLeft == 0);
     bool isTriggerUp = (currentKeyUp == 1 && prevKeyUp == 0);
 
-    // ŸƒtƒŒ[ƒ€‚Ì‚½‚ß‚ÉAŒ»İ‚ÌƒL[ó‘Ô‚ğ‹L‰¯
+    // æ¬¡ãƒ•ãƒ¬ãƒ¼ãƒ ã®ãŸã‚ã«ã€ç¾åœ¨ã®ã‚­ãƒ¼çŠ¶æ…‹ã‚’è¨˜æ†¶
     prevKeyRight = currentKeyRight;
     prevKeyLeft = currentKeyLeft;
     prevKeyUp = currentKeyUp;
 
-    // ‚à‚µƒvƒŒƒCƒ„[‚ª’n–Ê‚É‚¢‚½‚ç‰ñ“](’n–Ê‚ÉÚ’n‚µ‚Ä‚¢‚½‚ç)
+    // ã‚‚ã—ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãŒåœ°é¢ã«ã„ãŸã‚‰å›è»¢(åœ°é¢ã«æ¥åœ°ã—ã¦ã„ãŸã‚‰)
     if (player.IsGrounded()) {
         if (isTriggerRight) {
             TriggerRotation(RotationType::Right90);
@@ -135,61 +135,61 @@ bool Stage::Update(Player& player) {
         }
     }
 
-    // XVˆ—
+    // æ›´æ–°å‡¦ç†
     logic.Update();
 
     if (currentState == StageState::Rotating) {
-        // ‰ñ“]‚ªI‚í‚Á‚½‚©ƒ`ƒFƒbƒN
+        // å›è»¢ãŒçµ‚ã‚ã£ãŸã‹ãƒã‚§ãƒƒã‚¯
         if (!logic.IsRotating()) {
             currentState = StageState::Normal;
         }
-        return false; // ‰ñ“]’†‚ÍˆÈ‰º‚Ìˆ—‚ğs‚í‚È‚¢
+        return false; // å›è»¢ä¸­ã¯ä»¥ä¸‹ã®å‡¦ç†ã‚’è¡Œã‚ãªã„
     }
 
-    // --- ‚±‚±‚©‚ç‰º‚Í’Êí‚Ì‚İÀs ---
+    // --- ã“ã“ã‹ã‚‰ä¸‹ã¯é€šå¸¸æ™‚ã®ã¿å®Ÿè¡Œ ---
     
-    // ƒXƒCƒbƒ`ƒuƒƒbƒN‚ÌƒMƒ~ƒbƒNˆ—
+    // ã‚¹ã‚¤ãƒƒãƒãƒ–ãƒ­ãƒƒã‚¯ã®ã‚®ãƒŸãƒƒã‚¯å‡¦ç†
     if (hasSwitch && goalBlockIndex != -1) {
         bool isSwitchPressed = false;
 
-        // ƒXƒCƒbƒ`ƒuƒƒbƒN‚ğ’T‚µ‚Äd‚È‚è”»’è‚ğs‚¤
+        // ã‚¹ã‚¤ãƒƒãƒãƒ–ãƒ­ãƒƒã‚¯ã‚’æ¢ã—ã¦é‡ãªã‚Šåˆ¤å®šã‚’è¡Œã†
         for (auto& switchBlock : blocks) {
-            // ‚à‚µí—Ş‚ªƒXƒCƒbƒ`ƒuƒƒbƒN‚È‚ç
+            // ã‚‚ã—ç¨®é¡ãŒã‚¹ã‚¤ãƒƒãƒãƒ–ãƒ­ãƒƒã‚¯ãªã‚‰
             if (switchBlock.GetType() == BlockType::Switch) {
-                // ƒvƒŒƒCƒ„[‚ªd‚È‚Á‚Ä‚¢‚é‚©”»’è
+                // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãŒé‡ãªã£ã¦ã„ã‚‹ã‹åˆ¤å®š
                 if (IsHitAABB(switchBlock.GetRect(), player.GetRect())) {
                     isSwitchPressed = true;
                     break;
                 }
 
-                // ‘¼‚ÌƒuƒƒbƒN‚ªd‚È‚Á‚Ä‚é‚©”»’è
+                // ä»–ã®ãƒ–ãƒ­ãƒƒã‚¯ãŒé‡ãªã£ã¦ã‚‹ã‹åˆ¤å®š
                 for (auto& otherBlock : blocks) {
-                    // ©•ª©gA‚Ü‚½‚Íu–³Œø‚ÈƒuƒƒbƒNv‚Æ‚Ì”»’è‚ÍƒXƒLƒbƒv
+                    // è‡ªåˆ†è‡ªèº«ã€ã¾ãŸã¯ã€Œç„¡åŠ¹ãªãƒ–ãƒ­ãƒƒã‚¯ã€ã¨ã®åˆ¤å®šã¯ã‚¹ã‚­ãƒƒãƒ—
                     if (&switchBlock == &otherBlock || !otherBlock.IsActive()) {
                         continue;
                     }
 
-                    // AABB”»’è‚ğs‚¤
+                    // AABBåˆ¤å®šã‚’è¡Œã†
                     if (IsHitAABB(switchBlock.GetRect(), otherBlock.GetRect())) {
                         isSwitchPressed = true;
                         break;
                     }
                 }
             }
-            if (isSwitchPressed) break; // 1‚Â‚Å‚à‰Ÿ‚³‚ê‚Ä‚¢‚ê‚Îƒ‹[ƒv‚ğ”²‚¯‚é
+            if (isSwitchPressed) break; // 1ã¤ã§ã‚‚æŠ¼ã•ã‚Œã¦ã„ã‚Œã°ãƒ«ãƒ¼ãƒ—ã‚’æŠœã‘ã‚‹
         }
 
-        // ƒXƒCƒbƒ`‚ª‰Ÿ‚³‚ê‚Ä‚¢‚ê‚ÎƒS[ƒ‹‚ğoŒ»‚³‚¹A—£‚ê‚ê‚Î‰B‚·
+        // ã‚¹ã‚¤ãƒƒãƒãŒæŠ¼ã•ã‚Œã¦ã„ã‚Œã°ã‚´ãƒ¼ãƒ«ã‚’å‡ºç¾ã•ã›ã€é›¢ã‚Œã‚Œã°éš ã™
         blocks[goalBlockIndex].SetActive(isSwitchPressed);
     }
 
-    // ƒS[ƒ‹”»’èƒtƒ‰ƒO
+    // ã‚´ãƒ¼ãƒ«åˆ¤å®šãƒ•ãƒ©ã‚°
     bool isGoal = false;
 
-    // ƒuƒƒbƒN‚ÌXVƒ‹[ƒv
+    // ãƒ–ãƒ­ãƒƒã‚¯ã®æ›´æ–°ãƒ«ãƒ¼ãƒ—
     for (auto& block : blocks) {
         if (block.IsActive()) {
-            // Block‚ÌUpdate‚ªtrue(ƒS[ƒ‹)‚ğ•Ô‚µ‚½‚çAƒtƒ‰ƒO‚ğ—§‚Ä‚é
+            // Blockã®UpdateãŒtrue(ã‚´ãƒ¼ãƒ«)ã‚’è¿”ã—ãŸã‚‰ã€ãƒ•ãƒ©ã‚°ã‚’ç«‹ã¦ã‚‹
             if (block.Update(blocks, player.GetRect())) {
                 isGoal = true;
             }
@@ -198,56 +198,68 @@ bool Stage::Update(Player& player) {
 
     player.Update(blocks);
 
-    // ƒS[ƒ‹‚ÉG‚ê‚½‚ç true ‚ğ•Ô‚·
+    // ã‚´ãƒ¼ãƒ«ã«è§¦ã‚ŒãŸã‚‰ true ã‚’è¿”ã™
     return isGoal;
 }
 
 void Stage::Draw(const Player& player) const {
-    // Œ»İ‚ÌÀ•W‚ÌŠp“x‚ğæ“¾
+    // ç¾åœ¨ã®åº§æ¨™ã®è§’åº¦ã‚’å–å¾—
     float currentAngle = logic.GetCurrentAngle();
 
-    // ƒXƒe[ƒW‚É”z’u‚³‚ê‚Ä‚¢‚é‚·‚×‚Ä‚ÌƒuƒƒbƒN‚ğ•`‰æ‚·‚é
+    // ã‚¹ãƒ†ãƒ¼ã‚¸ã«é…ç½®ã•ã‚Œã¦ã„ã‚‹ã™ã¹ã¦ã®ãƒ–ãƒ­ãƒƒã‚¯ã‚’æç”»ã™ã‚‹
     for (const auto& block : blocks) {
         block.Draw(centerX, centerY, currentAngle);
     }
 
-    // ƒvƒŒƒCƒ„[‚Ì•`‰æ
+    // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®æç”»
     player.Draw(centerX, centerY, currentAngle);
 
-    // •¶š‚ğ•`‰æiX:10, Y:10 ‚ÌˆÊ’u‚ÉA”’‚¢•¶š‚Å•\¦j
-    DrawFormatStringToHandle(10, 10, Col.GetWhi(), Font.GetNormal(), _T("Œ»İ‚ÌŠp“x: %.2f"), currentAngle);
+    // æ–‡å­—åˆ—ã®é–‹å§‹åº§æ¨™
+    int x = 10, y = 10;
+    // æ”¹è¡Œç”¨ã®è¿½åŠ åº§æ¨™æ•°å€¤
+    int addPoint = 50;
 
-    // ó‘Ô‚ª‚í‚©‚è‚â‚·‚¢‚æ‚¤‚ÉA‰ñ“]’†‚©‚Ç‚¤‚©‚ğ•\¦
+    // æ–‡å­—ã‚’æç”»ï¼ˆX:10, Y:10 ã®ä½ç½®ã«ã€ç™½ã„æ–‡å­—ã§è¡¨ç¤ºï¼‰
+    DrawFormatStringToHandle(x, y, Col.GetWhi(), Font.GetNormal(), _T("ç¾åœ¨ã®è§’åº¦ï¼š%.2f"), currentAngle);
+
+    // çŠ¶æ…‹ãŒã‚ã‹ã‚Šã‚„ã™ã„ã‚ˆã†ã«ã€å›è»¢ä¸­ã‹ã©ã†ã‹ã‚’è¡¨ç¤º
     if (currentState == StageState::Rotating) {
-        DrawFormatStringToHandle(10, 50, Col.GetYel(), Font.GetNormal(), _T("ó‘Ô: ‰ñ“]’† (‘€ìƒƒbƒN)"));
+        DrawFormatStringToHandle(x, y + addPoint, Col.GetYel(), Font.GetNormal(), _T("çŠ¶æ…‹ï¼šå›è»¢ä¸­(æ“ä½œãƒ­ãƒƒã‚¯)"));
     }
     else {
-        DrawFormatStringToHandle(10, 50, Col.GetGre(), Font.GetNormal(), _T("ó‘Ô: ’ÊíƒvƒŒƒC (‘€ì‰Â”\)"));
+        DrawFormatStringToHandle(x, y + addPoint, Col.GetGre(), Font.GetNormal(), _T("çŠ¶æ…‹ï¼šé€šå¸¸ãƒ—ãƒ¬ã‚¤(æ“ä½œå¯èƒ½)"));
     }
+
+    DrawFormatStringToHandle(x, y + (addPoint * 14), Col.GetWhi(), Font.GetNormal(),
+        _T("ç§»å‹•ã‚­ãƒ¼ã€€ï¼¡ï¼šå·¦ã«ç§»å‹•ã€€ï¼¤ï¼šå³ã«ç§»å‹•ã€€ãƒªã‚»ãƒƒãƒˆï¼šSPACE"));
+
+    DrawFormatStringToHandle(x, y + (addPoint * 15),
+        Col.GetWhi(), Font.GetNormal(), _T("å›è»¢ã‚­ãƒ¼ã€€â†‘ï¼š180Â°å›è»¢ã€€â†’ï¼šå³ã«90Â°å›è»¢ â†ï¼šå·¦ã«90Â°å›è»¢"));
+
 }
 
 void Stage::TriggerRotation(RotationType type) {
     if (currentState == StageState::Normal) {
-        // 1. ƒXƒe[ƒW‰ñ“]‚ÌŠJn
+        // 1. ã‚¹ãƒ†ãƒ¼ã‚¸å›è»¢ã®é–‹å§‹
         logic.StartRotation(type);
         currentState = StageState::Rotating;
 
-        // 2. y’Ç‰Áz‰ñ“]‚É‰‚¶‚Äd—Í‚àØ‚è‘Ö‚¦‚é
-        // ‰ñ“]‚Ì“x‡‚¢‚É‡‚í‚¹‚ÄAd—Íƒ}ƒl[ƒWƒƒ[‚ğ‰ñ‚µ‚Ü‚·
+        // 2. ã€è¿½åŠ ã€‘å›è»¢ã«å¿œã˜ã¦é‡åŠ›ã‚‚åˆ‡ã‚Šæ›¿ãˆã‚‹
+        // å›è»¢ã®åº¦åˆã„ã«åˆã‚ã›ã¦ã€é‡åŠ›ãƒãƒãƒ¼ã‚¸ãƒ£ãƒ¼ã‚’å›ã—ã¾ã™
         switch (type) {
         case RotationType::Right90:
-            // Œvü‚è‚¾‚©‚ç‰E‰ñ“]‚µ‚½‚çd—Í‚Í¶‚È‚Ì‚ÅA3‰ñ“]‚µ‚Ä¶‘¤‚Éd—Í‚ğ‚Á‚Ä‚¢‚­
+            // æ™‚è¨ˆå‘¨ã‚Šã ã‹ã‚‰å³å›è»¢ã—ãŸã‚‰é‡åŠ›ã¯å·¦ãªã®ã§ã€3å›è»¢ã—ã¦å·¦å´ã«é‡åŠ›ã‚’æŒã£ã¦ã„ã
             GravityManager::Rotate();
             GravityManager::Rotate();
             GravityManager::Rotate();
             break;
         case RotationType::Left90:
-            // Œ»İ’n‚Ì‰E‘¤‚Éd—Í‚ğ‚Á‚Ä‚¢‚­
+            // ç¾åœ¨åœ°ã®å³å´ã«é‡åŠ›ã‚’æŒã£ã¦ã„ã
             GravityManager::Rotate();
             
             break;
         case RotationType::Turn180:
-            // 2‰ñ‰ñ‚µ‚ÄŒ»İ’n‚Ìã‘¤‚Éd—Í‚ğ‚Á‚Ä‚¢‚­
+            // 2å›å›ã—ã¦ç¾åœ¨åœ°ã®ä¸Šå´ã«é‡åŠ›ã‚’æŒã£ã¦ã„ã
             GravityManager::Rotate();
             GravityManager::Rotate();
             break;
@@ -255,7 +267,7 @@ void Stage::TriggerRotation(RotationType type) {
     }
 }
 
-// ƒuƒƒbƒNƒZƒbƒgŠÖ”
+// ãƒ–ãƒ­ãƒƒã‚¯ã‚»ãƒƒãƒˆé–¢æ•°
 void Stage::SetStageBlock(int x, int y, float move, BlockType bt) {
     blocks.push_back(Block(
         startX + (x * BLOCK_SIZE),

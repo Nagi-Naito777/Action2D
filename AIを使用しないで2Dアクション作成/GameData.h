@@ -9,7 +9,7 @@
 #define STAGE_BLOCK_MAX 21
 
 // ステージ最大数
-#define STAGE_MAX 5
+#define STAGE_MAX 100
 
 // プレイヤーサイズ
 #define PLAYER_SIZE 25
@@ -28,11 +28,12 @@
 
 // シーン管理用列挙体
 enum class SceneName {
-    TITLE,
-    SELECT,
-    PLAY,
-    RESULT,
-    DEBUG       // ステージ作成モードの画面
+    TITLE,  // タイトル画面
+    SELECT, // ステージ選択画面
+    PLAY,   // ゲーム画面
+    RESULT, // ステージクリア後とかに表示する画面
+    DEBUG   // ステージ作成モードの画面
+
 };
 
 // シーン間で共有するデータ
@@ -143,3 +144,6 @@ public:
 
 extern ColorManager Col;
 extern FontManager Font;
+
+// ゲーム終了用変数
+extern bool Game_End;

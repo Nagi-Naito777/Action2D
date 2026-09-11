@@ -13,7 +13,7 @@ private:
 	// プレイモード切り替えフラグ
 	bool isPlayMode;
 	// 編集・テスト用のステージ番号
-	int currentStageNo = 99;
+	int currentStageNo = 1;
 	// 現在選択中の配置ブロック文字
 	char selectedBlockChar;
 

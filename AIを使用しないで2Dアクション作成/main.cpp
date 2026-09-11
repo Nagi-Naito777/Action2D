@@ -34,6 +34,9 @@ Stateパターンを採用
 ColorManager Col;
 FontManager Font;
 
+// ゲーム終了用フラグ
+bool Game_End = false;
+
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     ChangeWindowMode(TRUE);
     if (DxLib_Init() == -1) return -1;
@@ -51,9 +54,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     
     while (
         ClearDrawScreen() == 0 &&		// 画面に描かれたものを消去する
-        ProcessMessage() == 0 &&        // ウィンドウズのメッセージ処理
-        CheckHitKey(KEY_INPUT_ESCAPE) == 0)
+        ProcessMessage() == 0)          // ウィンドウズのメッセージ処理
     {
+        if (Game_End) break;
+
         sceneManager.Update(); // どのシーンか気にせずUpdateを呼ぶ！
         sceneManager.Draw();   // どのシーンか気にせずDrawを呼ぶ！
         ScreenFlip();

@@ -47,17 +47,20 @@ SceneName DebugScene::Update() {
 
         // --- 2. ステージ番号の変更操作 (↑/↓キー) ---
         if (currentKeys[KEY_INPUT_UP] && !prevKeys[KEY_INPUT_UP]) {
-            currentStageNo = (currentStageNo < 99) ? currentStageNo + 1 : 1;
+            currentStageNo = (currentStageNo < STAGE_MAX) ? currentStageNo + 1 : 1;
             LoadDebugStage("stage" + std::to_string(currentStageNo) + ".txt");
         }
         if (currentKeys[KEY_INPUT_DOWN] && !prevKeys[KEY_INPUT_DOWN]) {
-            currentStageNo = (currentStageNo > 1) ? currentStageNo - 1 : 99;
+            currentStageNo = (currentStageNo > 1) ? currentStageNo - 1 : STAGE_MAX;
             LoadDebugStage("stage" + std::to_string(currentStageNo) + ".txt");
         }
 
         // --- 3. ステージの保存 (Sキー) ---
         if (currentKeys[KEY_INPUT_S] && !prevKeys[KEY_INPUT_S]) {
             SaveDebugStage("stage" + std::to_string(currentStageNo) + ".txt");
+
+            // 保存した後にステージ選択画面へ移行するシーン名を返す
+            return SceneName::SELECT;
         }
 
         // --- 4. マウスによる配置・削除処理 ---
@@ -193,14 +196,16 @@ void DebugScene::Draw() const {
         }
 
         // UI表示
-        DrawFormatString(10, 10, GetColor(255, 255, 255), "編集対象: stage%d.txt (↑/↓で切替)", currentStageNo);
-        DrawFormatString(10, 30, GetColor(255, 255, 0), "選択中ブロック: [%c]", selectedBlockChar);
-        DrawString(10, 50, "[1:通常 2:ゴール 3:重力(G) 4:スイッチ(S) 5:横移動(X) 6:縦移動(Y) 7:プレイヤー(P)]", GetColor(200, 200, 200));
-        DrawString(10, 70, "操作: 左クリック[設置] | 右クリック[削除] | Sキー[保存] | Pキー[テストプレイ]", GetColor(255, 255, 255));
+        DrawFormatStringToHandle(10, 10, Col.GetWhi(), Font.GetNormal(), "編集対象: stage%d.txt (↑/↓で切替)", currentStageNo);
+        DrawFormatStringToHandle(10, 50, Col.GetYel(), Font.GetNormal(), "選択中ブロック: [%c]", selectedBlockChar);
+        DrawFormatStringToHandle(10, 100, Col.GetWhi(), Font.GetNormal(), 
+            "【数字キーで変更】\n1:通常\n2:ゴール\n3:重力(G)\n4:スイッチ(S)\n5:横移動(X)\n6:縦移動(Y)\n7:プレイヤー(P)", GetColor(200, 200, 200));
+        DrawFormatStringToHandle(10, 700, Col.GetWhi(), Font.GetNormal(),
+            "操作: 左クリック[設置]  右クリック[削除]\nSキー[保存]  Pキー[テストプレイ]", GetColor(255, 255, 255));
     }
     else {
         stage.Draw(player);
-        DrawFormatString(10, 10, GetColor(0, 255, 0), "[PLAY MODE] Stage %d テスト中 | Pキー: エディットに戻る", currentStageNo);
+        DrawFormatString(10, 100, Col.GetGre(), "[PLAY MODE] Stage %d テスト中 | Pキー: エディットに戻る", currentStageNo);
     }
 }
 
