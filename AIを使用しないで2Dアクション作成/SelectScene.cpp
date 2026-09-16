@@ -13,8 +13,11 @@ SelectScene::SelectScene(SharedData* data) : BaseScene(data) {
     currentStage = 1;
     currentPage = 0;
 
-    prevUpKey = CheckHitKey(KEY_INPUT_UP);
-    prevDownKey = CheckHitKey(KEY_INPUT_DOWN);
+    // ビット論理和を使用してWASDキーにも対応
+    prevUpKey = CheckHitKey(KEY_INPUT_UP) | CheckHitKey(KEY_INPUT_W);
+    prevDownKey = CheckHitKey(KEY_INPUT_DOWN) | CheckHitKey(KEY_INPUT_S);
+    prevLeftKey = CheckHitKey(KEY_INPUT_LEFT) | CheckHitKey(KEY_INPUT_A);
+    prevRightKey = CheckHitKey(KEY_INPUT_RIGHT) | CheckHitKey(KEY_INPUT_D);
     prevEnterKey = CheckHitKey(KEY_INPUT_RETURN);
 
     isRotating = false;
@@ -36,7 +39,7 @@ SelectScene::~SelectScene() {
     }
 }
 
-// ★テキストファイルから文字データをそのままプレビュー用に読み込む関数
+// テキストファイルから文字データをそのままプレビュー用に読み込む関数
 void SelectScene::LoadStagePreview(int stageNo) {
     // 既に同じステージを読み込んでいるなら再読み込みしない
     if (loadedPreviewStage == stageNo) return;
@@ -72,9 +75,47 @@ void SelectScene::LoadStagePreview(int stageNo) {
     }
 }
 
+void SelectScene::ChangeStage(int amount) {
+    int nextStage = currentStage + amount;
+
+    // --- ステージ番号の限界突破を防ぐ（補正） ---
+    if (nextStage < 1) {
+        nextStage = 1;
+    }
+    if (nextStage > STAGE_MAX) {
+        nextStage = STAGE_MAX;
+    }
+
+    // --- ステージが実際に変わった場合のみ実行 ---
+    if (currentStage != nextStage) {
+        currentStage = nextStage;
+        LoadStagePreview(currentStage); // プレビューを更新
+
+        // 新しいステージが属するページ番号を計算
+        int newPage = (currentStage - 1) / stagesPerPage;
+
+        // --- ページ遷移が発生した場合のみ回転アニメーションをセット ---
+        if (newPage > currentPage) {
+            currentPage = newPage;
+            isRotating = true;
+            targetAngle -= DX_PI_F / 2.0f;
+            rotationSpeed = -(DX_PI_F / 2.0f) / 20.0f;
+        }
+        else if (newPage < currentPage) {
+            currentPage = newPage;
+            isRotating = true;
+            targetAngle += DX_PI_F / 2.0f;
+            rotationSpeed = (DX_PI_F / 2.0f) / 20.0f;
+        }
+    }
+}
+
 SceneName SelectScene::Update() {
-    int upKey = CheckHitKey(KEY_INPUT_UP);
-    int downKey = CheckHitKey(KEY_INPUT_DOWN);
+    // ビット論理和を使用してWASDキーにも対応
+    int upKey = CheckHitKey(KEY_INPUT_UP) | CheckHitKey(KEY_INPUT_W);
+    int downKey = CheckHitKey(KEY_INPUT_DOWN) | CheckHitKey(KEY_INPUT_S);
+    int leftKey = CheckHitKey(KEY_INPUT_LEFT) | CheckHitKey(KEY_INPUT_A);
+    int rightKey = CheckHitKey(KEY_INPUT_RIGHT) | CheckHitKey(KEY_INPUT_D);
     int enterKey = CheckHitKey(KEY_INPUT_RETURN);
 
     if (CheckHitKey(KEY_INPUT_SPACE) == 1) {
@@ -98,35 +139,15 @@ SceneName SelectScene::Update() {
     }
     // ====== アニメーションしていない時だけ操作可能 ======
     else {
-        // 下キー入力：次のページへ（逆方向へ90度回転）
-        if (downKey == 1 && prevDownKey == 0) {
-            if (currentStage < STAGE_MAX) {
-                currentStage++;
-                LoadStagePreview(currentStage); // ステージが変わったらプレビューを更新
 
-                if ((currentStage - 1) / stagesPerPage > currentPage) {
-                    currentPage++;
-                    isRotating = true;
-                    targetAngle -= DX_PI_F / 2.0f;
-                    rotationSpeed = -(DX_PI_F / 2.0f) / 20.0f;
-                }
-            }
-        }
-
-        // 上キー入力：前のページへ（逆方向へ90度回転）
-        if (upKey == 1 && prevUpKey == 0) {
-            if (currentStage > 1) {
-                currentStage--;
-                LoadStagePreview(currentStage); // ステージが変わったらプレビューを更新
-
-                if ((currentStage - 1) / stagesPerPage < currentPage) {
-                    currentPage--;
-                    isRotating = true;
-                    targetAngle += DX_PI_F / 2.0f;
-                    rotationSpeed = (DX_PI_F / 2.0f) / 20.0f;
-                }
-            }
-        }
+        // 下キー：1ステージ進む
+        if (downKey == 1 && prevDownKey == 0)   ChangeStage(1);
+        // 上キー：1ステージ戻る
+        if (upKey == 1 && prevUpKey == 0)       ChangeStage(-1);
+        // 右キー：1ページ分（stagesPerPage）一気に進む
+        if (rightKey == 1 && prevRightKey == 0) ChangeStage(stagesPerPage);
+        // 左キー：1ページ分（stagesPerPage）一気に戻る
+        if (leftKey == 1 && prevLeftKey == 0)   ChangeStage(-stagesPerPage);
 
         // エンターキーで決定
         if (enterKey == 1 && prevEnterKey == 0) {
@@ -135,8 +156,11 @@ SceneName SelectScene::Update() {
         }
     }
 
+    // 次フレームのためのキー状態更新
     prevUpKey = upKey;
     prevDownKey = downKey;
+    prevLeftKey = leftKey;
+    prevRightKey = rightKey;
     prevEnterKey = enterKey;
 
     return SceneName::SELECT;
@@ -177,9 +201,9 @@ void SelectScene::Draw() const {
     
 
     // --- ページ番号の表示 ---
-    int pageX = 700, pageY = 750;
+    int pageX = 690, pageY = 750;
     int maxPage = (STAGE_MAX + stagesPerPage - 1) / stagesPerPage; // 最大ページ数計算
-    DrawFormatStringToHandle(pageX, pageY, Col.GetWhi(), Font.GetNormal(), _T("%2d/%2d"), currentPage + 1, maxPage);
+    DrawFormatStringToHandle(pageX, pageY, Col.GetWhi(), Font.GetNormal(), _T("< %2d/%2d >"), currentPage + 1, maxPage);
 
     // --- フォント（文字）の描画 ---
     // 四角形が回転している間（isRotatingがtrue）はフォントを表示しないようにガード

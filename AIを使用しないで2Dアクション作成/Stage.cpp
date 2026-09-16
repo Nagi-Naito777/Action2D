@@ -150,37 +150,45 @@ bool Stage::Update(Player& player) {
     
     // スイッチブロックのギミック処理
     if (hasSwitch && goalBlockIndex != -1) {
-        bool isSwitchPressed = false;
+        // 全てのスイッチが押されているかフラグ
+        bool allSwitchesPressed = true;
 
         // スイッチブロックを探して重なり判定を行う
         for (auto& switchBlock : blocks) {
             // もし種類がスイッチブロックなら
             if (switchBlock.GetType() == BlockType::Switch) {
+                // このスイッチが押されているかフラグ
+                bool thisSwitchPressed = false;
                 // プレイヤーが重なっているか判定
                 if (IsHitAABB(switchBlock.GetRect(), player.GetRect())) {
-                    isSwitchPressed = true;
+                    thisSwitchPressed = true;
                     break;
                 }
+                else {
+                    // プレイヤーが重なっていなければ、他のブロックが重なっているか判定
+                    for (auto& otherBlock : blocks) {
+                        // 自分自身、または「無効なブロック」との判定はスキップ
+                        if (&switchBlock == &otherBlock || !otherBlock.IsActive()) {
+                            continue;
+                        }
 
-                // 他のブロックが重なってるか判定
-                for (auto& otherBlock : blocks) {
-                    // 自分自身、または「無効なブロック」との判定はスキップ
-                    if (&switchBlock == &otherBlock || !otherBlock.IsActive()) {
-                        continue;
-                    }
-
-                    // AABB判定を行う
-                    if (IsHitAABB(switchBlock.GetRect(), otherBlock.GetRect())) {
-                        isSwitchPressed = true;
-                        break;
+                        // AABB判定を行う
+                        if (IsHitAABB(switchBlock.GetRect(), otherBlock.GetRect())) {
+                            thisSwitchPressed = true;
+                        }
                     }
                 }
+
+                // もし「このスイッチ」が押されていなかったら
+                if (!thisSwitchPressed) {
+                    allSwitchesPressed = false; // 全てのスイッチが押されているわけではない
+                    break; // 1つでも押されていないスイッチを見つけたら、これ以上の確認は不要なのでループを抜ける
+                }
             }
-            if (isSwitchPressed) break; // 1つでも押されていればループを抜ける
         }
 
         // スイッチが押されていればゴールを出現させ、離れれば隠す
-        blocks[goalBlockIndex].SetActive(isSwitchPressed);
+        blocks[goalBlockIndex].SetActive(allSwitchesPressed);
     }
 
     // ゴール判定フラグ

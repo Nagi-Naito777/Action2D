@@ -201,7 +201,7 @@ void DebugScene::Draw() const {
         DrawFormatStringToHandle(10, 100, Col.GetWhi(), Font.GetNormal(), 
             "【数字キーで変更】\n1:通常\n2:ゴール\n3:重力(G)\n4:スイッチ(S)\n5:横移動(X)\n6:縦移動(Y)\n7:プレイヤー(P)", GetColor(200, 200, 200));
         DrawFormatStringToHandle(10, 700, Col.GetWhi(), Font.GetNormal(),
-            "操作: 左クリック[設置]  右クリック[削除]\nSキー[保存]  Pキー[テストプレイ]", GetColor(255, 255, 255));
+            "操作: 左クリック[設置]  右クリック[削除]\nSキー[保存してタイトルへ]  Pキー[テストプレイ]", GetColor(255, 255, 255));
     }
     else {
         stage.Draw(player);

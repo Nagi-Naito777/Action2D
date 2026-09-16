@@ -17,8 +17,10 @@ private:
     const int stagesPerPage = 5; // 1ページに表示するステージ数
 
     // キーのトリガー判定（単発押し判定）用変数
-    int prevUpKey = 0;
-    int prevDownKey = 0;
+    int prevUpKey = 0;      // 上矢印 (W)
+    int prevDownKey = 0;    // 下矢印 (S)
+    int prevLeftKey = 0;    // 左矢印 (A)
+    int prevRightKey = 0;   // 右矢印 (D)
     int prevEnterKey = 0;
 
     // 四角形の回転アニメーション用変数
@@ -34,4 +36,7 @@ private:
     int loadedPreviewStage = -1; // 現在読み込まれているステージ番号
 
     void LoadStagePreview(int stageNo); // テキスト読み込み関数
+
+    // ステージ選択画面用のステージ切り替え関数
+    void ChangeStage(int amount);
 };
