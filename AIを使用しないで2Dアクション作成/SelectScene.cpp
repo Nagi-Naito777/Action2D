@@ -119,7 +119,7 @@ SceneName SelectScene::Update() {
     int enterKey = CheckHitKey(KEY_INPUT_RETURN);
 
     if (CheckHitKey(KEY_INPUT_SPACE) == 1) {
-        sharedData->currentStageNo = 99;
+        sharedData->currentStageNo = currentStage;
         return SceneName::DEBUG;
     }
     if (CheckHitKey(KEY_INPUT_ESCAPE) == 1) {

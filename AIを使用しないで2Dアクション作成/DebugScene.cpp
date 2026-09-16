@@ -3,7 +3,7 @@
 #include <fstream>
 
 DebugScene::DebugScene(SharedData* data)
-    : BaseScene(data), isPlayMode(false), currentStageNo(1), selectedBlockChar('1'), mouseClickPrev(0) {
+    : BaseScene(data), isPlayMode(false), currentStageNo(0), selectedBlockChar('1'), mouseClickPrev(0) {
     memset(prevKeys, 0, sizeof(prevKeys));
     controller = new PlayerController(&player);
 }
@@ -12,6 +12,9 @@ DebugScene::~DebugScene() {}
 
 // 初期化処理
 void DebugScene::Init() {
+    // SelectSceneから渡されたステージ番号を取得する
+    currentStageNo = sharedData->currentStageNo;
+
     // マップ初期化（すべて空白 '0'）
     for (int y = 0; y < STAGE_BLOCK_MAX; ++y) {
         for (int x = 0; x < STAGE_BLOCK_MAX; ++x) {

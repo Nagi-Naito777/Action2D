@@ -1,6 +1,12 @@
 #pragma once
 #include "BaseScene.h"
 #include "Stage.h"
+// ===================================================
+// 元々デバッグ用のクラスとして作成したが、
+// ステージ作成機能を実装したら面白いのではと思い
+// そのままステージ作成モードとして実装しました
+// ===================================================
+
 #include "GameData.h"
 #include "PlayerController.h"
 #include <string>
@@ -12,8 +18,8 @@ private:
 
 	// プレイモード切り替えフラグ
 	bool isPlayMode;
-	// 編集・テスト用のステージ番号
-	int currentStageNo = 1;
+	// 選択されたステージの番号
+	int currentStageNo;
 	// 現在選択中の配置ブロック文字
 	char selectedBlockChar;
 
