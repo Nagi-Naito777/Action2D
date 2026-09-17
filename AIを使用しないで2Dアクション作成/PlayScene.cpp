@@ -49,4 +49,5 @@ SceneName PlayScene::Update() {
 void PlayScene::Draw() const {
 
 	stage.Draw(player);
+
 }

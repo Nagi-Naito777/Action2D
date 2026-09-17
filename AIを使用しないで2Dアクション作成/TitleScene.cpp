@@ -8,8 +8,14 @@ TitleScene::TitleScene(SharedData* data) :
     m_innerX(0.0f), m_innerY(0.0f),
     m_innerVX(0.0f), m_innerVY(0.0f),
     outerHalf(100.0f), innerHalf(5.0f),
-    m_escGuard(true) // 最初はガードを有効にしておく
+    m_escGuard(true),   // 最初はガードを有効にしておく
+    m_cursorIndex(0),   // 初期状態は 0 (チュートリアル)
+    m_upGuard(false)    // ガード初期化
 {
+    // キーの初期状態を取得（WASDキー対応）
+    prevUpKey = CheckHitKey(KEY_INPUT_UP) | CheckHitKey(KEY_INPUT_W);
+    prevDownKey = CheckHitKey(KEY_INPUT_DOWN) | CheckHitKey(KEY_INPUT_S);
+    prevEnterKey = CheckHitKey(KEY_INPUT_RETURN);
 }
 
 
@@ -88,6 +94,33 @@ SceneName TitleScene::Update() {
     }
 
     // ----------------------------------------------------
+    // カーソルの移動処理
+    // ----------------------------------------------------
+    // 上キーの処理
+    if (CheckHitKey(KEY_INPUT_UP) || CheckHitKey(KEY_INPUT_W)) {
+        if (!m_upGuard) {
+            m_cursorIndex--;
+            if (m_cursorIndex < 0) m_cursorIndex = 1; // 一番上なら下へループ
+            m_upGuard = true;
+        }
+    }
+    else {
+        m_upGuard = false; // キーが離されたらガード解除
+    }
+
+    // 下キーの処理
+    if (CheckHitKey(KEY_INPUT_DOWN) || CheckHitKey(KEY_INPUT_S)) {
+        if (!m_downGuard) {
+            m_cursorIndex++;
+            if (m_cursorIndex > 1) m_cursorIndex = 0; // 一番下なら上へループ
+            m_downGuard = true;
+        }
+    }
+    else {
+        m_downGuard = false; // キーが離されたらガード解除
+    }
+
+    // ----------------------------------------------------
     // シーン遷移処理
     // ----------------------------------------------------
     
@@ -105,11 +138,17 @@ SceneName TitleScene::Update() {
         }
     }
 
-	// エンターキーを押したらステージ選択画面に移行
-	if (CheckHitKey(KEY_INPUT_RETURN)) {
-		return SceneName::SELECT;
-	}
-	return SceneName::TITLE;
+    // エンターキーを押したら選択中のシーンに移行
+    if (CheckHitKey(KEY_INPUT_RETURN)) {
+        if (m_cursorIndex == 0) {
+            return SceneName::TUTORIAL; // ※必要に応じてEnum名を合わせてください
+        }
+        else {
+            return SceneName::SELECT;
+        }
+    }
+
+    return SceneName::TITLE;
 }
 
 void TitleScene::Draw() const {
@@ -117,9 +156,21 @@ void TitleScene::Draw() const {
     int titleX = 100, titleY = 100;
     DrawFormatStringToHandle(titleX, titleY, Col.GetSky(), Font.GetBig(), _T("ミステリアス\n  リンネキューブ"));
 
-    // ゲーム開始テキスト
-    int startX = 100, startY = 600;
-    DrawFormatStringToHandle(startX, startY, Col.GetYel(), Font.GetNormal(), _T("Enterキーでゲーム開始"));
+    // ----------------------------------------------------
+    // メニューとカーソルの描画
+    // ----------------------------------------------------
+    int menuX = 140;
+    int menuY_Tutorial = 550;
+    int menuY_Select = 600;
+
+    // 選択中の項目は黄色、それ以外は白色で描画
+    DrawFormatStringToHandle(menuX, menuY_Tutorial, (m_cursorIndex == 0) ? Col.GetYel() : Col.GetWhi(), Font.GetNormal(), _T("チュートリアルで遊ぶ"));
+    DrawFormatStringToHandle(menuX, menuY_Select, (m_cursorIndex == 1) ? Col.GetYel() : Col.GetWhi(), Font.GetNormal(), _T("ステージ選択"));
+
+    // カーソル (▶) の描画
+    int cursorX = menuX - 40;
+    int cursorY = (m_cursorIndex == 0) ? menuY_Tutorial : menuY_Select;
+    DrawFormatStringToHandle(cursorX, cursorY, Col.GetYel(), Font.GetNormal(), _T(">"));
 
     // --- ここから回転する四角形の描画処理 ---
     float centerX = 830.0f;

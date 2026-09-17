@@ -112,7 +112,7 @@
       <AdditionalLibraryDirectories>.\DxLib_VC\プロジェクトに追加すべきファイル_VC用</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(ProjectDir)stage*.txt" "$(OutDir)"</Command>
+      <Command>xcopy "$(ProjectDir)data" "$(OutDir)data" /I /E /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -133,7 +133,7 @@
       <AdditionalLibraryDirectories>.\DxLib_VC\プロジェクトに追加すべきファイル_VC用</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(ProjectDir)stage*.txt" "$(OutDir)"</Command>
+      <Command>xcopy "$(ProjectDir)data" "$(OutDir)data" /I /E /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -151,6 +151,7 @@
     <ClCompile Include="Stage.cpp" />
     <ClCompile Include="StageLogic.cpp" />
     <ClCompile Include="TitleScene.cpp" />
+    <ClCompile Include="TutorialScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseScene.h" />
@@ -167,6 +168,8 @@
     <ClInclude Include="Stage.h" />
     <ClInclude Include="StageLogic.h" />
     <ClInclude Include="TitleScene.h" />
+    <ClInclude Include="Tutorial.h" />
+    <ClInclude Include="TutorialScene.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="stage1.txt" />

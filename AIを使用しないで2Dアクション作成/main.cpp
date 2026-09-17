@@ -38,6 +38,7 @@ FontManager Font;
 bool Game_End = false;
 
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
+    SetAlwaysRunFlag(TRUE);         // 非アクティブ状態でも処理を止めない
     ChangeWindowMode(TRUE);
     if (DxLib_Init() == -1) return -1;
     SetWindowText(_T("ミステリアス リンネキューブ"));        // ウィンドウのテキスト変更

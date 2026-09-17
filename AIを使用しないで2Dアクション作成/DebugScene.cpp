@@ -27,7 +27,7 @@ void DebugScene::Init() {
     selectedBlockChar = '1'; // 初期選択は通常ブロック
 
     // 起動時に現在のステージファイルを読み込む（存在する場合）
-    LoadDebugStage("stage" + std::to_string(currentStageNo) + ".txt");
+    LoadDebugStage("data/stage" + std::to_string(currentStageNo) + ".txt");
 }
 
 // 更新処理
@@ -51,16 +51,16 @@ SceneName DebugScene::Update() {
         // --- 2. ステージ番号の変更操作 (↑/↓キー) ---
         if (currentKeys[KEY_INPUT_UP] && !prevKeys[KEY_INPUT_UP]) {
             currentStageNo = (currentStageNo < STAGE_MAX) ? currentStageNo + 1 : 1;
-            LoadDebugStage("stage" + std::to_string(currentStageNo) + ".txt");
+            LoadDebugStage("data/stage" + std::to_string(currentStageNo) + ".txt");
         }
         if (currentKeys[KEY_INPUT_DOWN] && !prevKeys[KEY_INPUT_DOWN]) {
             currentStageNo = (currentStageNo > 1) ? currentStageNo - 1 : STAGE_MAX;
-            LoadDebugStage("stage" + std::to_string(currentStageNo) + ".txt");
+            LoadDebugStage("data/stage" + std::to_string(currentStageNo) + ".txt");
         }
 
         // --- 3. ステージの保存 (Sキー) ---
         if (currentKeys[KEY_INPUT_S] && !prevKeys[KEY_INPUT_S]) {
-            SaveDebugStage("stage" + std::to_string(currentStageNo) + ".txt");
+            SaveDebugStage("data/stage" + std::to_string(currentStageNo) + ".txt");
 
             // 保存した後にステージ選択画面へ移行するシーン名を返す
             return SceneName::SELECT;
@@ -113,7 +113,7 @@ SceneName DebugScene::Update() {
 
         if (isPlayMode) {
             // 現在のエディット状態を保存してStageクラスに読み込ませる
-            std::string fileName = "stage" + std::to_string(currentStageNo) + ".txt";
+            std::string fileName = "data/stage" + std::to_string(currentStageNo) + ".txt";
             SaveDebugStage(fileName);
             stage.Init(player, currentStageNo);
         }
@@ -141,6 +141,7 @@ void DebugScene::Draw() const {
     float stageTotalHeight = STAGE_BLOCK_MAX * BLOCK_SIZE;
     int startX = (WIN_MAX_X - (int)stageTotalWidth) / 2;
     int startY = (WIN_MAX_Y - (int)stageTotalHeight) / 2;
+    int x = 10; // フォント描画用
 
     if (!isPlayMode) {
         // マップ上のブロックを描画
@@ -199,16 +200,22 @@ void DebugScene::Draw() const {
         }
 
         // UI表示
-        DrawFormatStringToHandle(10, 10, Col.GetWhi(), Font.GetNormal(), "編集対象: stage%d.txt (↑/↓で切替)", currentStageNo);
-        DrawFormatStringToHandle(10, 50, Col.GetYel(), Font.GetNormal(), "選択中ブロック: [%c]", selectedBlockChar);
-        DrawFormatStringToHandle(10, 100, Col.GetWhi(), Font.GetNormal(), 
-            "【数字キーで変更】\n1:通常\n2:ゴール\n3:重力(G)\n4:スイッチ(S)\n5:横移動(X)\n6:縦移動(Y)\n7:プレイヤー(P)", GetColor(200, 200, 200));
-        DrawFormatStringToHandle(10, 700, Col.GetWhi(), Font.GetNormal(),
-            "操作: 左クリック[設置]  右クリック[削除]\nSキー[保存してタイトルへ]  Pキー[テストプレイ]", GetColor(255, 255, 255));
+        DrawFormatStringToHandle(x, 10, Col.GetWhi(), Font.GetNormal(), "編集対象: stage%d.txt (↑/↓で切替)", currentStageNo);
+        DrawFormatStringToHandle(x, 50, Col.GetYel(), Font.GetNormal(), "選択中ブロック: [%c]", selectedBlockChar);
+        DrawFormatStringToHandle(x, 100, Col.GetWhi(), Font.GetStageMake(),
+            "【数字キーで変更】\n1:通常\n2:ゴール\n3:重力(G)\n4:スイッチ(S)\n5:横移動(X)\n6:縦移動(Y)\n7:プレイヤー(P)", Col.GetWhi());
+        DrawFormatStringToHandle(x, 600, Col.GetWhi(), Font.GetStageMake(),
+            "【操作方法】\n左クリック:設置\n右クリック:削除\nS:保存＆タイトルへ\nP:テストプレイ", Col.GetWhi());
     }
     else {
+        // テストプレイ中の文字描画（横中央揃え）
+        const TCHAR* debugStr = _T("[PLAY MODE] Stage %d テスト中 | Pキー: エディットに戻る");
+        int debugWidth = GetDrawFormatStringWidthToHandle(Font.GetStageMake(), debugStr);
+        int debugX = (WIN_MAX_X - debugWidth) / 2;
+        int debugY = 700;
+        DrawFormatStringToHandle(debugX, debugY, Col.GetGre(), Font.GetStageMake(), debugStr, currentStageNo);
+
         stage.Draw(player);
-        DrawFormatString(10, 100, Col.GetGre(), "[PLAY MODE] Stage %d テスト中 | Pキー: エディットに戻る", currentStageNo);
     }
 }
 

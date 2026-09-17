@@ -4,6 +4,9 @@ PlayerController::PlayerController(Player *p) {
 	targetplayer = p;
 }
 
+PlayerController::~PlayerController() {
+}
+
 // 更新処理
 void PlayerController::Update() {
 	// 操作による移動を0にする
@@ -13,8 +16,12 @@ void PlayerController::Update() {
 
 	// プレイヤーが地面にいるときだけキー入力を受け付ける
 	if (targetplayer->IsGrounded()) {
-		// AとDでキャラクターを操作する設計
-		if (CheckHitKey(KEY_INPUT_A)) {
+		// Aキー（左移動）が許可されており、かつAキーが押されているか
+		bool canMoveLeft = (allowedActions & ACTION_MOVE_LEFT) && CheckHitKey(KEY_INPUT_A);
+		// Dキー（右移動）が許可されており、かつDキーが押されているか
+		bool canMoveRight = (allowedActions & ACTION_MOVE_RIGHT) && CheckHitKey(KEY_INPUT_D);
+
+		if (canMoveLeft) {
 			switch (GravityManager::currentDir) {
 			case GravityDir::Down:  moveSpeedX = -5.0f; break; // 重力下：Aで左へ
 			case GravityDir::Up:    moveSpeedX = +5.0f; break; // 重力上：Aで右へ（画面が逆さまなため）
@@ -22,7 +29,7 @@ void PlayerController::Update() {
 			case GravityDir::Left:  moveSpeedY = -5.0f; break; // 重力左：Aで下へ（画面が右に倒れているため）
 			}
 		}
-		else if (CheckHitKey(KEY_INPUT_D)) {
+		else if (canMoveRight) {
 			switch (GravityManager::currentDir) {
 			case GravityDir::Down:  moveSpeedX = +5.0f; break; // 重力下：Dで右へ
 			case GravityDir::Up:    moveSpeedX = -5.0f; break; // 重力上：Dで左へ
@@ -31,6 +38,7 @@ void PlayerController::Update() {
 			}
 		}
 	}
+
 	// 決定した移動速度をセット
 	if (GravityManager::currentDir == GravityDir::Down || GravityManager::currentDir == GravityDir::Up) {
 		targetplayer->SetVelocityX(moveSpeedX);

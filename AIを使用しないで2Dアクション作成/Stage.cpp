@@ -3,6 +3,7 @@
 #include "Block.h"
 #include "Player.h"
 #include "StageLogic.h"
+#include "Tutorial.h"
 #include <fstream>
 #include <string>
 
@@ -23,15 +24,13 @@ Stage::Stage() {
 
 Stage::~Stage() {}
 
-void Stage::Init(Player &p,int stage) {
+// ステージファイルの共通読み込み関数
+void Stage::LoadStageFile(Player& p, const std::string& fileName) {
     // 重力方向の初期化
     GravityManager::currentDir = GravityDir::Down;
 
     // ステージの回転角度を初期化
     logic.Init();
-
-    // ステージ番号を格納
-    stageNo = stage;
 
     // 速度リセット
     p.SetVelocityX(0.0f);
@@ -44,14 +43,11 @@ void Stage::Init(Player &p,int stage) {
     hasSwitch = false;
     goalBlockIndex = -1;
 
-    // 読み込みファイル名を決定
-    std::string fileName = "stage" + std::to_string(stageNo) + ".txt";
-
     // テキストファイルを開く
     std::ifstream file(fileName);
 
     if (!file) {
-        // ファイルが見つからなかった時のエラー対策で周りを囲むだけにする
+        // ファイルが見つからなかった場合のエラー対策（枠で囲む）
         for (int y = 0; y < STAGE_BLOCK_MAX; y++) {
             for (int x = 0; x < STAGE_BLOCK_MAX; x++) {
                 if (y == 0 || y == STAGE_BLOCK_MAX - 1 || x == 0 || x == STAGE_BLOCK_MAX - 1) {
@@ -65,40 +61,36 @@ void Stage::Init(Player &p,int stage) {
     // テキストファイルから1行ずつ読み込む
     std::string line;
     int y = 0;
-    int blockMove = 200.0f; // ブロックの移動量
+    int blockMove = 200.0f;
     while (std::getline(file, line) && y < STAGE_BLOCK_MAX) {
-        // 1文字ずつ判定してブロックを設置
         for (int x = 0; x < line.length() && x < STAGE_BLOCK_MAX; x++) {
             char c = line[x];
 
             switch (c) {
-            case '1': // 通常ブロック
+            case '1':
                 SetStageBlock(x, y, 0, BlockType::Normal);
                 break;
-            case '2': // ゴール
+            case '2':
                 SetStageBlock(x, y, 0, BlockType::Goal);
-                // ゴールブロックが配列のどこに追加されたかを記憶する
-                goalBlockIndex = blocks.size() - 1;
+                goalBlockIndex = static_cast<int>(blocks.size()) - 1;
                 break;
-            case 'G': // 重力ブロック
+            case 'G':
                 SetStageBlock(x, y, 0, BlockType::Gravity);
                 break;
-            case 'S': // スイッチブロック
+            case 'S':
                 SetStageBlock(x, y, 0, BlockType::Switch);
-                // スイッチブロックの存在を記憶
                 hasSwitch = true;
                 break;
-            case 'X': // 横に動くブロック
+            case 'X':
                 SetStageBlock(x, y, blockMove, BlockType::MoveX);
                 break;
-            case 'Y': // 縦に動くブロック
+            case 'Y':
                 SetStageBlock(x, y, blockMove, BlockType::MoveY);
                 break;
-            case 'P': // プレイヤーの初期位置
+            case 'P':
                 p.SetPosition(startX + (x * BLOCK_SIZE), startY + (y * BLOCK_SIZE));
                 break;
             default:
-                // "0"の場合は空白
                 break;
             }
         }
@@ -106,11 +98,35 @@ void Stage::Init(Player &p,int stage) {
     }
 }
 
+// 通常ステージの初期化
+void Stage::Init(Player& p, int stage) {
+    stageNo = stage;
+    std::string fileName = "data/stage" + std::to_string(stageNo) + ".txt";
+    LoadStageFile(p, fileName);
+}
+
+// チュートリアルステージの初期化
+void Stage::InitTutorial(Player& p, int tutorialNo) {
+    stageNo = tutorialNo;
+    std::string fileName = "data/tutorial" + std::to_string(tutorialNo) + ".txt"; // 例: tutorial1.txt
+    LoadStageFile(p, fileName);
+}
+
 bool Stage::Update(Player& player) {
-    // 現在のキー状態を取得
-    int currentKeyRight = CheckHitKey(KEY_INPUT_RIGHT);
-    int currentKeyLeft = CheckHitKey(KEY_INPUT_LEFT);
-    int currentKeyUp = CheckHitKey(KEY_INPUT_UP);
+    int currentKeyRight = 0;
+    int currentKeyLeft = 0;
+    int currentKeyUp = 0;
+
+    // 許可されているアクションのみ、キーの入力状態を取得する
+    if (allowedActions & ACTION_ROTATE_R90) {
+        currentKeyRight = CheckHitKey(KEY_INPUT_RIGHT); // または Dキー
+    }
+    if (allowedActions & ACTION_ROTATE_L90) {
+        currentKeyLeft = CheckHitKey(KEY_INPUT_LEFT);   // または Aキー
+    }
+    if (allowedActions & ACTION_ROTATE_180) {
+        currentKeyUp = CheckHitKey(KEY_INPUT_UP);       // または Wキー
+    }
 
     // 「押した瞬間」かどうかを判定
     bool isTriggerRight = (currentKeyRight == 1 && prevKeyRight == 0);
@@ -221,29 +237,6 @@ void Stage::Draw(const Player& player) const {
 
     // プレイヤーの描画
     player.Draw(centerX, centerY, currentAngle);
-
-    // 文字列の開始座標
-    int x = 10, y = 10;
-    // 改行用の追加座標数値
-    int addPoint = 50;
-
-    // 文字を描画（X:10, Y:10 の位置に、白い文字で表示）
-    DrawFormatStringToHandle(x, y, Col.GetWhi(), Font.GetNormal(), _T("現在の角度：%.2f"), currentAngle);
-
-    // 状態がわかりやすいように、回転中かどうかを表示
-    if (currentState == StageState::Rotating) {
-        DrawFormatStringToHandle(x, y + addPoint, Col.GetYel(), Font.GetNormal(), _T("状態：回転中(操作ロック)"));
-    }
-    else {
-        DrawFormatStringToHandle(x, y + addPoint, Col.GetGre(), Font.GetNormal(), _T("状態：通常プレイ(操作可能)"));
-    }
-
-    DrawFormatStringToHandle(x, y + (addPoint * 14), Col.GetWhi(), Font.GetNormal(),
-        _T("移動キー　Ａ：左に移動　Ｄ：右に移動　リセット：SPACE"));
-
-    DrawFormatStringToHandle(x, y + (addPoint * 15),
-        Col.GetWhi(), Font.GetNormal(), _T("回転キー　↑：180°回転　→：右に90°回転 ←：左に90°回転"));
-
 }
 
 void Stage::TriggerRotation(RotationType type) {

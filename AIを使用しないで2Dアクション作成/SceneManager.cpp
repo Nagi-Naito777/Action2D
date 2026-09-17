@@ -1,5 +1,6 @@
 #include "SceneManager.h"
 #include "TitleScene.h"
+#include "TutorialScene.h"
 #include "SelectScene.h"
 #include "PlayScene.h"
 #include "ResultScene.h"
@@ -36,11 +37,12 @@ void SceneManager::ChangeScene(SceneName nextName) {
 
 	// êVÇµÇ¢ÉVÅ[ÉìÇê∂ê¨
 	switch (nextName) {
-	case SceneName::TITLE:  currentScene = new TitleScene(&sharedData);  break;
-	case SceneName::SELECT: currentScene = new SelectScene(&sharedData); break;
-	case SceneName::PLAY:   currentScene = new PlayScene(&sharedData);   break;
-	case SceneName::RESULT: currentScene = new ResultScene(&sharedData); break;
-	case SceneName::DEBUG:  currentScene = new DebugScene(&sharedData);  break;
+	case SceneName::TITLE:    currentScene = new TitleScene(&sharedData);    break;
+	case SceneName::TUTORIAL: currentScene = new TutorialScene(&sharedData); break;
+	case SceneName::SELECT:   currentScene = new SelectScene(&sharedData);   break;
+	case SceneName::PLAY:     currentScene = new PlayScene(&sharedData);     break;
+	case SceneName::RESULT:   currentScene = new ResultScene(&sharedData);   break;
+	case SceneName::DEBUG:    currentScene = new DebugScene(&sharedData);    break;
 		break;
 		break;
 	}

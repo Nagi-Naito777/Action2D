@@ -52,7 +52,7 @@ void SelectScene::LoadStagePreview(int stageNo) {
     }
 
     // ファイル名を組み立て
-    std::string fileName = "stage" + std::to_string(stageNo) + ".txt";
+    std::string fileName = "data/stage" + std::to_string(stageNo) + ".txt";
     std::ifstream file(fileName);
 
     if (file) {

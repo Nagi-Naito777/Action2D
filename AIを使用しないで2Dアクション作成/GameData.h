@@ -28,12 +28,12 @@
 
 // シーン管理用列挙体
 enum class SceneName {
-    TITLE,  // タイトル画面
-    SELECT, // ステージ選択画面
-    PLAY,   // ゲーム画面
-    RESULT, // ステージクリア後とかに表示する画面
-    DEBUG   // ステージ作成モードの画面
-
+    TITLE,   // タイトル画面
+    TUTORIAL,// チュートリアル画面
+    SELECT,  // ステージ選択画面
+    PLAY,    // ゲーム画面
+    RESULT,  // ステージクリア後とかに表示する画面
+    DEBUG    // ステージ作成モードの画面
 };
 
 // シーン間で共有するデータ
@@ -69,6 +69,7 @@ class FontManager
 private:
     int smallHandle;
     int normalHandle;
+    int stage_makeHandle;   // ステージ作成用ハンドル
     int bigHandle;
 
 public:
@@ -80,6 +81,7 @@ public:
     void Init() {
         smallHandle = CreateFontToHandle(_T("MS ゴシック"), 16, 3);
         normalHandle = CreateFontToHandle(_T("MS ゴシック"), 32, 3);
+        stage_makeHandle = CreateFontToHandle(_T("MS ゴシック"), 26, 3);
         bigHandle = CreateFontToHandle(_T("MS ゴシック"), 64, 5);
     }
 
@@ -87,12 +89,14 @@ public:
     void End() {
         DeleteFontToHandle(smallHandle);
         DeleteFontToHandle(normalHandle);
+        DeleteFontToHandle(stage_makeHandle);
         DeleteFontToHandle(bigHandle);
     }
 
     // ゲッター関数
     int GetSmall() const { return smallHandle; }
     int GetNormal() const { return normalHandle; }
+    int GetStageMake() const { return stage_makeHandle; }
     int GetBig() const { return bigHandle; }
 };
 

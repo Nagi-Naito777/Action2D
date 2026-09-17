@@ -31,6 +31,9 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
+    <Filter Include="チュートリアル関係">
+      <UniqueIdentifier>{3e4780e7-2317-4500-a91e-dad88865453b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TitleScene.cpp">
@@ -75,6 +78,9 @@
     <ClCompile Include="StageLogic.cpp">
       <Filter>ステージギミックファイル</Filter>
     </ClCompile>
+    <ClCompile Include="TutorialScene.cpp">
+      <Filter>シーン管理cppファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseScene.h">
@@ -118,6 +124,12 @@
     </ClInclude>
     <ClInclude Include="StageLogic.h">
       <Filter>ステージギミックファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="TutorialScene.h">
+      <Filter>シーン管理ヘッダーファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Tutorial.h">
+      <Filter>チュートリアル関係</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

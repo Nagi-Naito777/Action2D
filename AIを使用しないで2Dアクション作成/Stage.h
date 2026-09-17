@@ -1,6 +1,7 @@
 // ステージクラス
 #pragma once
 #include <vector>
+#include <string>
 #include "Block.h"
 #include "Player.h"
 #include "StageLogic.h"
@@ -34,6 +35,11 @@ private:
 
     bool hasSwitch = false;  // ステージ内にスイッチが存在するか
     int goalBlockIndex = -1; // blocks配列の中でのゴールブロックの番号
+
+    unsigned int allowedActions = 0xFFFFFFFF; // 初期状態は全許可(ACTION_ALL)
+
+    // ファイルからステージを読み込む共通処理
+    void LoadStageFile(Player& p, const std::string& fileName);
     
 public:
     Stage();
@@ -41,6 +47,9 @@ public:
 
     // ステージの初期化
     void Init(Player& p, int stage);
+
+    // チュートリアル用読み込み関数
+    void InitTutorial(Player& p, int tutorialStageNo);
 
     // 更新処理
     bool Update(Player& player);
@@ -53,4 +62,6 @@ public:
 
     // ブロックセット関数
     void SetStageBlock(int x, int y, float move, BlockType bt);
+
+    void SetAllowedActions(unsigned int actions) { allowedActions = actions; }
 };

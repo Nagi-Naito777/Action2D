@@ -5,6 +5,12 @@
 class TitleScene :public BaseScene
 {
 private:
+	// メニュー選択用の変数
+	int m_menuCursor;   // 0: チュートリアル, 1: ステージ選択
+	int prevUpKey;
+	int prevDownKey;
+	int prevEnterKey;
+
 	// タイトル画面に描画する四角形の回転角度を保持する変数
 	float m_angle;
 
@@ -18,7 +24,10 @@ private:
 	float outerHalf; // 外枠の半サイズ
 	float innerHalf; // 内枠の半サイズ
 
-	bool m_escGuard; // 前の画面からの押しっぱなしを防ぐガードフラグ
+	int m_cursorIndex; // 0:チュートリアル, 1:ステージ選択
+	bool m_upGuard;    // 上キーの押しっぱなしガード
+	bool m_downGuard;  // 下キーの押しっぱなしガード
+	bool m_escGuard;   // Escキーの押しっぱなしガード
 
 public:
 	TitleScene(SharedData* data);
