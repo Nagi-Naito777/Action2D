@@ -210,10 +210,10 @@ void DebugScene::Draw() const {
     else {
         // テストプレイ中の文字描画（横中央揃え）
         const TCHAR* debugStr = _T("[PLAY MODE] Stage %d テスト中 | Pキー: エディットに戻る");
-        int debugWidth = GetDrawFormatStringWidthToHandle(Font.GetStageMake(), debugStr);
+        int debugWidth = GetDrawFormatStringWidthToHandle(Font.GetNormal(), debugStr, currentStageNo);
         int debugX = (WIN_MAX_X - debugWidth) / 2;
         int debugY = 700;
-        DrawFormatStringToHandle(debugX, debugY, Col.GetGre(), Font.GetStageMake(), debugStr, currentStageNo);
+        DrawFormatStringToHandle(debugX, debugY, Col.GetGre(), Font.GetNormal(), debugStr, currentStageNo);
 
         stage.Draw(player);
     }

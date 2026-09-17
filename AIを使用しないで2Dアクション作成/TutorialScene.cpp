@@ -43,7 +43,7 @@ void TutorialScene::LoadTasks(int step) {
             ACTION_NONE, // 全操作をロック
             [this]() {
                 waitTimer++;
-                return waitTimer >= 120; // 60FPS想定で2秒経過したら次へ
+                return waitTimer >= 120; // 2秒経過したら次へ
             }
             });
 
