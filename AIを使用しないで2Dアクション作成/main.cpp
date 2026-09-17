@@ -33,6 +33,7 @@ Stateパターンを採用
 // クラスのインスタンス化
 ColorManager Col;
 FontManager Font;
+SoundManager Sound;
 
 // ゲーム終了用フラグ
 bool Game_End = false;
@@ -46,9 +47,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     SetBackgroundColor(0, 0, 0);			// 背景色設定
     SetDrawScreen(DX_SCREEN_BACK);
 
-    // 色とフォントの読み込み
+    // 色とフォントとサウンドの読み込み
     Col.Init();
     Font.Init();
+    Sound.Init();
 
     // 実体生成
     SceneManager sceneManager;
@@ -63,6 +65,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         sceneManager.Draw();   // どのシーンか気にせずDrawを呼ぶ！
         ScreenFlip();
     }
+
+    Font.End();
+    Sound.End();
 
     DxLib_End();
     return 0;

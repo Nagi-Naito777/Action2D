@@ -19,6 +19,8 @@ void PlayScene::Init() {
 }
 
 SceneName PlayScene::Update() {
+	Sound.Play("BGM_PLAY", true, false);
+
 	// 移動処理
 	controller->Update();
 
@@ -29,17 +31,23 @@ SceneName PlayScene::Update() {
 	if (isGoalReached) {
 		// 共有データにクリアしたという判定を渡す
 		sharedData->isClear = true;
-
+		Sound.Play("SE_CLEAR", false, true);
+		Sound.Stop("BGM_PLAY");
+		Sound.Play("BGM_MAIN", true, true);
 		return SceneName::RESULT;
 	}
 
 	// ESCキーでタイトルに戻る
 	if (CheckHitKey(KEY_INPUT_ESCAPE)) {
+		Sound.Play("SE_SYSTEM", false, true);
+		Sound.Stop("BGM_PLAY");
+		Sound.Play("BGM_MAIN", true, true);
 		return SceneName::TITLE;
 	}
 
 	// スペースキーでステージリセット
 	if (CheckHitKey(KEY_INPUT_SPACE)) {
+		Sound.Play("SE_SYSTEM", false, true);
 		Init();
 	}
 

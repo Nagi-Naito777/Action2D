@@ -20,6 +20,8 @@ TitleScene::TitleScene(SharedData* data) :
 
 
 SceneName TitleScene::Update() {
+    Sound.Play("BGM_MAIN", true, false);
+
     // ----------------------------------------------------
     // 回転アニメーションの更新
     // ----------------------------------------------------
@@ -99,6 +101,7 @@ SceneName TitleScene::Update() {
     // 上キーの処理
     if (CheckHitKey(KEY_INPUT_UP) || CheckHitKey(KEY_INPUT_W)) {
         if (!m_upGuard) {
+            Sound.Play("SE_SYSTEM", false, true);
             m_cursorIndex--;
             if (m_cursorIndex < 0) m_cursorIndex = 1; // 一番上なら下へループ
             m_upGuard = true;
@@ -111,6 +114,7 @@ SceneName TitleScene::Update() {
     // 下キーの処理
     if (CheckHitKey(KEY_INPUT_DOWN) || CheckHitKey(KEY_INPUT_S)) {
         if (!m_downGuard) {
+            Sound.Play("SE_SYSTEM", false, true);
             m_cursorIndex++;
             if (m_cursorIndex > 1) m_cursorIndex = 0; // 一番下なら上へループ
             m_downGuard = true;
@@ -134,13 +138,17 @@ SceneName TitleScene::Update() {
     else {
         // ガードが解除されたあとに、新しくEscキーが押されたらゲーム終了フラグを立てる
         if (CheckHitKey(KEY_INPUT_ESCAPE)) {
+            Sound.Play("SE_SYSTEM", false, true);
             Game_End = true;
         }
     }
 
     // エンターキーを押したら選択中のシーンに移行
     if (CheckHitKey(KEY_INPUT_RETURN)) {
+        Sound.Play("SE_SYSTEM", false, true);
         if (m_cursorIndex == 0) {
+            Sound.Stop("BGM_MAIN");
+            Sound.Play("BGM_PLAY", true, true);
             return SceneName::TUTORIAL; // ※必要に応じてEnum名を合わせてください
         }
         else {

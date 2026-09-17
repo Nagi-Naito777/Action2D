@@ -114,6 +114,7 @@ void TutorialScene::ApplyAllowedActions() {
 }
 
 SceneName TutorialScene::Update() {
+
     // 移動処理
     controller->Update();
 
@@ -137,6 +138,9 @@ SceneName TutorialScene::Update() {
         // 全ステップ完了した場合はクリアとしてリザルトへ遷移
         if (currentStep > MAX_TUTORIAL_STEPS) {
             sharedData->isClear = true;
+            Sound.Play("SE_CLEAR", false, true);
+            Sound.Stop("BGM_PLAY");
+            Sound.Play("BGM_MAIN", true, true);
             return SceneName::RESULT;
         }
         else {
@@ -147,6 +151,9 @@ SceneName TutorialScene::Update() {
 
     // ESCキーでタイトルに戻る
     if (CheckHitKey(KEY_INPUT_ESCAPE)) {
+        Sound.Play("SE_SYSTEM", false, true);
+        Sound.Stop("BGM_PLAY");
+        Sound.Play("BGM_MAIN", true, true);
         return SceneName::TITLE;
     }
 
@@ -158,6 +165,7 @@ SceneName TutorialScene::Update() {
     prevSpace = currentSpace;
 
     if (isTriggerSpace) {
+        Sound.Play("SE_SYSTEM", false, true);
         // 現在が「リセットを促すタスク（Step1のフェーズ2）」の場合は、
         // タスク側(checkClear)で処理してフェーズを進めるため、ここでは無視する
         if (!tasks.empty() && currentPhase < tasks.size() && tasks[currentPhase].allowedActions == ACTION_RESET) {

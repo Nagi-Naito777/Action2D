@@ -1,4 +1,5 @@
 #include "StageLogic.h"
+#include "GameData.h"
 #include <cmath>
 
 // コンストラクタ
@@ -66,6 +67,7 @@ void StageLogic::Update() {
 	case RotationPhase::Shake:
 		// timerの経過フレーム数に応じて、手動で角度をズラす
 		if (timer < 5) {
+			Sound.Play("SE_ROTATE_START", false, false);
 			currentAngle = startAngle - (3.0f * dir); // 逆方向に3度ズレる
 		}
 		else if (timer < 10) {
@@ -85,6 +87,7 @@ void StageLogic::Update() {
 		break;
 	case RotationPhase::Pause:
 		if (timer > 25) {
+			Sound.Play("SE_ROTATE", false, false);
 			currentPhase = RotationPhase::Accelerate;
 			timer = 0;
 		}

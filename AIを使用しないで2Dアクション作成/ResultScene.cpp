@@ -203,6 +203,7 @@ SceneName ResultScene::Update() {
 
     // Enterキーでタイトル画面に移行
 	if (CheckHitKey(KEY_INPUT_RETURN)) {
+        Sound.Play("SE_SYSTEM", false, true);
 		return SceneName::SELECT;
 	}
 

@@ -1,91 +1,93 @@
-// ƒQ[ƒ€“à‚Å‹¤’Ê‚µ‚Äg‚¤ƒf[ƒ^‚È‚Ç‚ğ‚Ü‚Æ‚ß‚éƒwƒbƒ_[
+ï»¿// ã‚²ãƒ¼ãƒ å†…ã§å…±é€šã—ã¦ä½¿ã†ãƒ‡ãƒ¼ã‚¿ãªã©ã‚’ã¾ã¨ã‚ã‚‹ãƒ˜ãƒƒãƒ€ãƒ¼
 #pragma once
 
-//‰æ–ÊƒTƒCƒYw’èƒ}ƒNƒ
+//ç”»é¢ã‚µã‚¤ã‚ºæŒ‡å®šãƒã‚¯ãƒ­
 #define WIN_MAX_X 1000
 #define WIN_MAX_Y 800
 
-// ƒXƒe[ƒW”ÍˆÍ‚ÌƒuƒƒbƒNÅ‘åŒÂ”
+// ã‚¹ãƒ†ãƒ¼ã‚¸ç¯„å›²ã®ãƒ–ãƒ­ãƒƒã‚¯æœ€å¤§å€‹æ•°
 #define STAGE_BLOCK_MAX 21
 
-// ƒXƒe[ƒWÅ‘å”
+// ã‚¹ãƒ†ãƒ¼ã‚¸æœ€å¤§æ•°
 #define STAGE_MAX 100
 
-// ƒvƒŒƒCƒ„[ƒTƒCƒY
+// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚µã‚¤ã‚º
 #define PLAYER_SIZE 25
-// ƒuƒƒbƒNƒTƒCƒY
+// ãƒ–ãƒ­ãƒƒã‚¯ã‚µã‚¤ã‚º
 #define BLOCK_SIZE 25
-// ƒuƒƒbƒN‚ÆƒvƒŒƒCƒ„[‚ÌŒ„ŠÔl—¶”’l
+// ãƒ–ãƒ­ãƒƒã‚¯ã¨ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®éš™é–“è€ƒæ…®æ•°å€¤
 #define PLA_BLO_GAP (0.01f)
 
-// d—Í’è”
+// é‡åŠ›å®šæ•°
 #define GRAVITY (0.5f)
-// d—ÍÅ‘å’l
+// é‡åŠ›æœ€å¤§å€¤
 #define GRAVITY_MAX (15.0f)
 
 #include "DxLib.h"
 #include <cmath>
+#include <string>
+#include <unordered_map>
 
-// ƒV[ƒ“ŠÇ——p—ñ‹“‘Ì
+// ã‚·ãƒ¼ãƒ³ç®¡ç†ç”¨åˆ—æŒ™ä½“
 enum class SceneName {
-    TITLE,   // ƒ^ƒCƒgƒ‹‰æ–Ê
-    TUTORIAL,// ƒ`ƒ…[ƒgƒŠƒAƒ‹‰æ–Ê
-    SELECT,  // ƒXƒe[ƒW‘I‘ğ‰æ–Ê
-    PLAY,    // ƒQ[ƒ€‰æ–Ê
-    RESULT,  // ƒXƒe[ƒWƒNƒŠƒAŒã‚Æ‚©‚É•\¦‚·‚é‰æ–Ê
-    DEBUG    // ƒXƒe[ƒWì¬ƒ‚[ƒh‚Ì‰æ–Ê
+    TITLE,   // ã‚¿ã‚¤ãƒˆãƒ«ç”»é¢
+    TUTORIAL,// ãƒãƒ¥ãƒ¼ãƒˆãƒªã‚¢ãƒ«ç”»é¢
+    SELECT,  // ã‚¹ãƒ†ãƒ¼ã‚¸é¸æŠç”»é¢
+    PLAY,    // ã‚²ãƒ¼ãƒ ç”»é¢
+    RESULT,  // ã‚¹ãƒ†ãƒ¼ã‚¸ã‚¯ãƒªã‚¢å¾Œã¨ã‹ã«è¡¨ç¤ºã™ã‚‹ç”»é¢
+    DEBUG    // ã‚¹ãƒ†ãƒ¼ã‚¸ä½œæˆãƒ¢ãƒ¼ãƒ‰ã®ç”»é¢
 };
 
-// ƒV[ƒ“ŠÔ‚Å‹¤—L‚·‚éƒf[ƒ^
+// ã‚·ãƒ¼ãƒ³é–“ã§å…±æœ‰ã™ã‚‹ãƒ‡ãƒ¼ã‚¿
 struct SharedData {
-    int currentStageNo = 1;  // ‘I‘ğ‚³‚ê‚½ƒXƒe[ƒW”Ô†
-    bool isClear = false;    // ƒNƒŠƒA‚µ‚½‚©‚Ç‚¤‚©
+    int currentStageNo = 1;  // é¸æŠã•ã‚ŒãŸã‚¹ãƒ†ãƒ¼ã‚¸ç•ªå·
+    bool isClear = false;    // ã‚¯ãƒªã‚¢ã—ãŸã‹ã©ã†ã‹
 };
 
-// ‰ñ“]—p‚ÌlŠpŒ`‚ğ•`‰æ‚·‚é‚½‚ß‚ÌÀ•W‚ğæ“¾‚·‚éŠÖ”
+// å›è»¢ç”¨ã®å››è§’å½¢ã‚’æç”»ã™ã‚‹ãŸã‚ã®åº§æ¨™ã‚’å–å¾—ã™ã‚‹é–¢æ•°
 void GetRotatedPosition(float centerX, float centerY, float x, float y,
     float* outX, float* outY, float angleDeg);
 
-// d—Í‚Ì•ûŒü
+// é‡åŠ›ã®æ–¹å‘
 enum class GravityDir {
-    Down,   // ’Êí‚Í‰ºŒü‚«
-    Left,   // ¶Œü‚«
-    Up,     // ã
-    Right   // ‰E
+    Down,   // é€šå¸¸ã¯ä¸‹å‘ã
+    Left,   // å·¦å‘ã
+    Up,     // ä¸Š
+    Right   // å³
 };
 
-// d—Í•ûŒü‚Ìƒ}ƒl[ƒWƒƒ[
+// é‡åŠ›æ–¹å‘ã®ãƒãƒãƒ¼ã‚¸ãƒ£ãƒ¼
 class GravityManager {
 public:
-    static GravityDir currentDir; // Œ»İ‚ÌŒü‚«
+    static GravityDir currentDir; // ç¾åœ¨ã®å‘ã
 
-    // Œü‚«‚ğ‰ñ“]‚³‚¹‚éŠÖ”
+    // å‘ãã‚’å›è»¢ã•ã›ã‚‹é–¢æ•°
     static void Rotate();
 };
 
-// ƒtƒHƒ“ƒgŠÇ—ƒNƒ‰ƒX
+// ãƒ•ã‚©ãƒ³ãƒˆç®¡ç†ã‚¯ãƒ©ã‚¹
 class FontManager
 {
 private:
     int smallHandle;
     int normalHandle;
-    int stage_makeHandle;   // ƒXƒe[ƒWì¬—pƒnƒ“ƒhƒ‹
+    int stage_makeHandle;   // ã‚¹ãƒ†ãƒ¼ã‚¸ä½œæˆç”¨ãƒãƒ³ãƒ‰ãƒ«
     int bigHandle;
 
 public:
-    // ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+    // ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
     FontManager() : smallHandle(-1), normalHandle(-1), bigHandle(-1) {}
     ~FontManager() = default;
 
-    // ƒtƒHƒ“ƒg‰Šú‰»
+    // ãƒ•ã‚©ãƒ³ãƒˆåˆæœŸåŒ–
     void Init() {
-        smallHandle = CreateFontToHandle(_T("MS ƒSƒVƒbƒN"), 16, 3);
-        normalHandle = CreateFontToHandle(_T("MS ƒSƒVƒbƒN"), 32, 3);
-        stage_makeHandle = CreateFontToHandle(_T("MS ƒSƒVƒbƒN"), 26, 3);
-        bigHandle = CreateFontToHandle(_T("MS ƒSƒVƒbƒN"), 64, 5);
+        smallHandle = CreateFontToHandle(_T("MS ã‚´ã‚·ãƒƒã‚¯"), 16, 3);
+        normalHandle = CreateFontToHandle(_T("MS ã‚´ã‚·ãƒƒã‚¯"), 32, 3);
+        stage_makeHandle = CreateFontToHandle(_T("MS ã‚´ã‚·ãƒƒã‚¯"), 26, 3);
+        bigHandle = CreateFontToHandle(_T("MS ã‚´ã‚·ãƒƒã‚¯"), 64, 5);
     }
 
-    // ƒtƒHƒ“ƒgƒf[ƒ^íœ
+    // ãƒ•ã‚©ãƒ³ãƒˆãƒ‡ãƒ¼ã‚¿å‰Šé™¤
     void End() {
         DeleteFontToHandle(smallHandle);
         DeleteFontToHandle(normalHandle);
@@ -93,7 +95,7 @@ public:
         DeleteFontToHandle(bigHandle);
     }
 
-    // ƒQƒbƒ^[ŠÖ”
+    // ã‚²ãƒƒã‚¿ãƒ¼é–¢æ•°
     int GetSmall() const { return smallHandle; }
     int GetNormal() const { return normalHandle; }
     int GetStageMake() const { return stage_makeHandle; }
@@ -102,16 +104,16 @@ public:
 
 class ColorManager {
 private:
-    int m_red;    // Ô
-    int m_blu;    // Â
-    int m_gre;    // —Î
-    int m_yel;    // ‰©F
-    int m_bla;    // •
-    int m_whi;    // ”’
-    int m_gra;    // ŠDF
-    int m_sky;    // …F
+    int m_red;    // èµ¤
+    int m_blu;    // é’
+    int m_gre;    // ç·‘
+    int m_yel;    // é»„è‰²
+    int m_bla;    // é»’
+    int m_whi;    // ç™½
+    int m_gra;    // ç°è‰²
+    int m_sky;    // æ°´è‰²
 public:
-    // ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+    // ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
     ColorManager()
         : m_red(0)
         , m_blu(0)
@@ -123,19 +125,19 @@ public:
         , m_sky(0)
     {}
 
-    // ‰Šú‰»ˆ—
+    // åˆæœŸåŒ–å‡¦ç†
     void Init() {
-        m_red = GetColor(255, 0, 0);    // Ô
-        m_blu = GetColor(0, 0, 255);    // Â
-        m_gre = GetColor(0, 255, 0);    // —Î
-        m_yel = GetColor(255, 255, 0);  // ‰©F
-        m_bla = GetColor(0, 0, 0);      // •
-        m_whi = GetColor(255, 255, 255);// ”’
-        m_gra = GetColor(128, 128, 128);// ŠDF
+        m_red = GetColor(255, 0, 0);    // èµ¤
+        m_blu = GetColor(0, 0, 255);    // é’
+        m_gre = GetColor(0, 255, 0);    // ç·‘
+        m_yel = GetColor(255, 255, 0);  // é»„è‰²
+        m_bla = GetColor(0, 0, 0);      // é»’
+        m_whi = GetColor(255, 255, 255);// ç™½
+        m_gra = GetColor(128, 128, 128);// ç°è‰²
         m_sky = GetColor(0, 255, 255);
     }
 
-    // ƒQƒbƒ^[ŠÖ”
+    // ã‚²ãƒƒã‚¿ãƒ¼é–¢æ•°
     int GetRed() const { return m_red; }
     int GetBlu() const { return m_blu; }
     int GetGre() const { return m_gre; }
@@ -146,8 +148,42 @@ public:
     int GetSky() const { return m_sky; }
 };
 
+// ã‚µã‚¦ãƒ³ãƒ‰ç®¡ç†ã‚¯ãƒ©ã‚¹
+class SoundManager {
+private:
+    // æ–‡å­—åˆ—ã‚’ã‚­ãƒ¼ã«ã—ã¦ã€DxLibã®éŸ³å£°ãƒãƒ³ãƒ‰ãƒ«(int)ã‚’ä¿å­˜ã™ã‚‹ãƒãƒƒãƒ—
+    std::unordered_map<std::string, int> m_sounds;
+
+public:
+    // ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
+    SoundManager();
+    ~SoundManager();
+
+    // åˆæœŸåŒ–(BGMãƒ»SEã®èª­ã¿è¾¼ã¿)
+    void Init();
+
+    // éŸ³å£°ãƒ‡ãƒ¼ã‚¿ã®å…¨å‰Šé™¤ï¼ˆã‚²ãƒ¼ãƒ çµ‚äº†æ™‚ã«å‘¼ã¶ï¼‰
+    void End();
+
+    // å†ç”Ÿé–¢æ•°ï¼ˆã”è¦æœ›ã®åˆ†å‰²å‡¦ç†ï¼‰
+    // isLoop: trueãªã‚‰BGM(ãƒ«ãƒ¼ãƒ—)ã€falseãªã‚‰SE(å˜éŸ³)
+    // fromTop: trueãªã‚‰æœ€åˆã‹ã‚‰å†ç”Ÿã€falseãªã‚‰é€”ä¸­ã‹ã‚‰
+    void Play(const std::string& key,
+        bool isLoop = false, bool fromTop = true);
+
+    // æŒ‡å®šã—ãŸéŸ³å£°ã‚’åœæ­¢ã™ã‚‹é–¢æ•°
+    void Stop(const std::string& key);
+
+    // å…¨ã¦ã®éŸ³å£°ã‚’åœæ­¢ã™ã‚‹é–¢æ•°ï¼ˆã‚·ãƒ¼ãƒ³é·ç§»æ™‚ãªã©ã«ä¾¿åˆ©ï¼‰
+    void StopAll();
+
+    // éŸ³é‡å¤‰æ›´é–¢æ•° (volume: 0 ã€œ 255)
+    void SetVolume(const std::string& key, int volume);
+};
+
 extern ColorManager Col;
 extern FontManager Font;
+extern SoundManager Sound;
 
-// ƒQ[ƒ€I—¹—p•Ï”
+// ã‚²ãƒ¼ãƒ çµ‚äº†ç”¨å¤‰æ•°
 extern bool Game_End;

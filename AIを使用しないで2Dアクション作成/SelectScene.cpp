@@ -1,4 +1,5 @@
 ﻿#include "SelectScene.h"
+#include "GameData.h"
 #include <math.h>
 #include <stdio.h>
 #include <fstream>
@@ -107,10 +108,13 @@ void SelectScene::ChangeStage(int amount) {
             targetAngle += DX_PI_F / 2.0f;
             rotationSpeed = (DX_PI_F / 2.0f) / 20.0f;
         }
+        Sound.Play("SE_SYSTEM", false, true);
     }
 }
 
 SceneName SelectScene::Update() {
+    Sound.Play("BGM_MAIN", true, false);
+
     // ビット論理和を使用してWASDキーにも対応
     int upKey = CheckHitKey(KEY_INPUT_UP) | CheckHitKey(KEY_INPUT_W);
     int downKey = CheckHitKey(KEY_INPUT_DOWN) | CheckHitKey(KEY_INPUT_S);
@@ -119,10 +123,12 @@ SceneName SelectScene::Update() {
     int enterKey = CheckHitKey(KEY_INPUT_RETURN);
 
     if (CheckHitKey(KEY_INPUT_SPACE) == 1) {
+        Sound.Play("SE_SYSTEM", false, true);
         sharedData->currentStageNo = currentStage;
         return SceneName::DEBUG;
     }
     if (CheckHitKey(KEY_INPUT_ESCAPE) == 1) {
+        Sound.Play("SE_SYSTEM", false, true);
         return SceneName::TITLE;
     }
 
@@ -151,7 +157,10 @@ SceneName SelectScene::Update() {
 
         // エンターキーで決定
         if (enterKey == 1 && prevEnterKey == 0) {
+            Sound.Play("SE_SYSTEM", false, true);
             sharedData->currentStageNo = currentStage;
+            Sound.Stop("BGM_MAIN");
+            Sound.Play("BGM_PLAY", true, true);
             return SceneName::PLAY;
         }
     }
